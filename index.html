@@ -1,1098 +1,165 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Entrega de Turno - Residencia Adulto Mayor</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        @media print {
-            .no-print {
-                display: none !important;
-            }
-            .print-only {
-                display: block !important;
-            }
-            body {
-                Residencia Saint Joseph" class="h-16 w-auto object-contain bg-white rounded-lg p-1">
-                color: black;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrega de Turno - Residencia Saint Joseph</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col">
+<body class="bg-slate-50 font-sans min-h-screen text-slate-800 pb-12">
 
-    <!-- Header Principal -->
-    <header class="bg-indigo-700 text-white shadow-lg no-print">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center space-x-3">
-                <!-- Logo SVG idéntico a las manos formando corazón -->
-                <div class="p-1.5 bg-white rounded-xl shadow-md flex items-center justify-center">
-                    <svg class="w-10 h-10 text-slate-600" viewBox="0 0 1000 1000" fill="currentColor">
-                        <!-- Manos estilizadas formando corazón en espacio negativo -->
-                        <path fill="#7899b0" d="M482,236 C440,165 340,160 260,225 C175,295 185,420 270,510 C340,584 430,650 492,705 C497,709 503,709 508,705 C570,650 660,584 730,510 C815,420 825,295 740,225 C660,160 560,165 518,236 C505,258 495,258 482,236 Z" opacity="0"/>
-                        <!-- Mano Izquierda -->
-                        <path fill="#7899b0" d="M480,240 C430,170 320,160 230,230 C150,290 145,400 210,500 C240,545 285,595 350,655 C405,705 450,740 480,760 C460,710 400,640 330,575 C275,525 240,480 230,440 C220,400 240,365 270,360 C300,355 330,375 350,400 C370,425 410,480 435,510 C445,522 460,520 465,505 C470,490 460,475 445,455 C410,410 370,360 340,315 C320,285 325,255 355,245 C385,235 415,255 435,285 C455,315 480,355 500,385 C508,397 520,395 525,382 C530,370 522,358 510,340 C485,300 455,255 440,220 C465,210 490,225 500,245 Z" />
-                        <!-- Ilustración vectorial del Logo exacto -->
-                        <g fill="#7193a7">
-                            <path d="M490,265 C415,130 250,150 195,285 C150,395 200,510 295,615 C360,685 440,740 490,772 C496,776 504,776 510,772 C560,740 640,685 705,615 C800,510 850,395 805,285 C750,150 585,130 510,265 C502,278 498,278 490,265 Z" fill-none/>
-                        </g>
-                    </svg>
-                    <img src="https://lh3.googleusercontent.com/d/1_saint_joseph_logo_placeholder" onerror="this.remove()" class="w-10 h-10 object-contain hidden" alt="Saint Joseph Logo">
-                    <!-- Icono fallback de manos cuidado -->
-                    <div class="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-700">
-                        <i data-lucide="heart-handshake" class="w-7 h-7"></i>
-                    </div>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold leading-tight">Residencia "Saint Joseph"</h1>
-                    <p class="text-xs text-indigo-200">Sistema Digital de Entrega de Turnos En Enfermería y Cuidado</p>
-                </div>
-            </div>
-
-            <!-- Selección de Perfil del Jefe de Turno y Fecha (Calendario) -->
-            <div class="flex flex-wrap items-center gap-3 bg-indigo-800/60 p-2.5 rounded-xl border border-indigo-500/30 text-xs sm:text-sm">
-                <div class="flex items-center space-x-1.5">
-                    <i data-lucide="user-check" class="w-4 h-4 text-amber-300"></i>
-                    <span class="font-medium text-indigo-200">Jefe de Turno:</span>
-                    <select id="supervisor-select" onchange="changeSupervisor()" class="bg-indigo-900 text-white rounded border border-indigo-400/40 px-2 py-1 text-xs focus:outline-none font-semibold">
-                        <option value="Antonio González">Antonio González</option>
-                        <option value="Jennifer Soto">Jennifer Soto</option>
-                        <option value="Katerin Sobarzo">Katerin Sobarzo</option>
-                    </select>
-                </div>
-                <span class="text-indigo-400">|</span>
-                <div class="flex items-center space-x-1">
-                    <i data-lucide="calendar" class="w-4 h-4 text-indigo-300"></i>
-                    <!-- Campo de Fecha interactivo estilo Calendario -->
-                    <input type="date" id="shift-date-picker" onchange="updateShiftDate()" class="bg-indigo-900 text-white rounded border border-indigo-400/40 px-2 py-0.5 text-xs focus:outline-none font-semibold cursor-pointer">
-                </div>
-                <span class="text-indigo-400">|</span>
-                <div class="flex items-center space-x-1">
-                    <span class="font-medium">Turno:</span>
-                    <select id="shift-type" class="bg-indigo-900 text-white rounded border border-indigo-400/40 px-2 py-1 text-xs focus:outline-none font-semibold">
-                        <!-- Opciones dinámicas de turnos -->
-                    </select>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Contenido Principal -->
-    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6">
-
-        <!-- Métricas Rápidas / Alertas de la Noche -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 no-print">
-            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Total Residentes</p>
-                    <p class="text-2xl font-bold text-slate-800 mt-1" id="stat-total">24</p>
-                </div>
-                <div class="p-3 bg-blue-50 text-blue-600 rounded-lg">
-                    <i data-lucide="users" class="w-6 h-6"></i>
-                </div>
-            </div>
-            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Novedades Médicas</p>
-                    <p class="text-2xl font-bold text-amber-600 mt-1" id="stat-alerts">3</p>
-                </div>
-                <div class="p-3 bg-amber-50 text-amber-600 rounded-lg">
-                    <i data-lucide="alert-triangle" class="w-6 h-6"></i>
-                </div>
-            </div>
-            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">En Observación</p>
-                    <p class="text-2xl font-bold text-red-600 mt-1" id="stat-obs">2</p>
-                </div>
-                <div class="p-3 bg-red-50 text-red-600 rounded-lg">
-                    <i data-lucide="activity" class="w-6 h-6"></i>
-                </div>
-            </div>
-            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Medicamentos Esp.</p>
-                    <p class="text-2xl font-bold text-emerald-600 mt-1" id="stat-meds">5</p>
-                </div>
-                <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg">
-                    <i data-lucide="pill" class="w-6 h-6"></i>
-                </div>
-            </div>
+  <!-- ENCABEZADO Y LOGO -->
+  <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-4">
+      
+      <!-- LOGO RESIDENCIA SAINT JOSEPH -->
+      <div class="flex items-center gap-3">
+        <img src="logo.jpg" alt="Logo Residencia Saint Joseph" class="h-16 w-auto object-contain bg-white rounded-lg p-1" onerror="this.style.display='none'; document.getElementById('svg-fallback').style.display='block';">
+        
+        <!-- Fallback SVG por si aún no subes la foto logo.jpg -->
+        <div id="svg-fallback" class="hidden flex items-center gap-2">
+          <svg class="w-12 h-12 text-slate-800" viewBox="0 0 100 100" fill="currentColor">
+            <path d="M50 35 C40 20 20 25 20 42 C20 60 45 78 50 82 C55 78 80 60 80 42 C80 25 60 20 50 35 Z" fill="#1e293b"/>
+          </svg>
         </div>
 
-        <!-- Navegación por pestañas -->
-        <div class="flex border-b border-slate-200 space-x-4 no-print overflow-x-auto">
-            <button id="tab-btn-shift" onclick="switchTab('shift')" class="py-3 px-4 text-sm font-semibold border-b-2 border-indigo-600 text-indigo-600 flex items-center space-x-2 whitespace-nowrap">
-                <i data-lucide="clipboard-edit" class="w-4 h-4"></i>
-                <span>Entrega de Turno Actual</span>
-            </button>
-            <button id="tab-btn-residents" onclick="switchTab('residents')" class="py-3 px-4 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center space-x-2 whitespace-nowrap">
-                <i data-lucide="user" class="w-4 h-4"></i>
-                <span>Ficha de Residentes</span>
-            </button>
-            <button id="tab-btn-history" onclick="switchTab('history')" class="py-3 px-4 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center space-x-2 whitespace-nowrap">
-                <i data-lucide="history" class="w-4 h-4"></i>
-                <span>Histórico de Entregas</span>
-            </button>
-            <button id="tab-btn-config" onclick="switchTab('config')" class="py-3 px-4 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center space-x-2 whitespace-nowrap">
-                <i data-lucide="settings" class="w-4 h-4"></i>
-                <span>Configurar Turnos y Perfiles</span>
-            </button>
+        <div>
+          <h1 class="text-xl font-bold tracking-tight text-slate-900">Saint JOSEPH</h1>
+          <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Residencia Adulto Mayor</p>
         </div>
+      </div>
 
-        <!-- SECCIÓN 1: ENTREGA DE TURNO ACTUAL -->
-        <div id="tab-shift" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-            <!-- Columna Izquierda & Centro: Novedades por Residente & Generales -->
-            <div class="lg:col-span-2 space-x-0 space-y-6">
-
-                <!-- Cuadro Resumen General del Turno -->
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-                    <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-base font-bold text-slate-800 flex items-center space-x-2">
-                            <i data-lucide="file-text" class="w-5 h-5 text-indigo-600"></i>
-                            <span>Observaciones Generales de la Residencia</span>
-                        </h2>
-                        <span class="text-xs bg-indigo-50 text-indigo-700 font-medium px-2.5 py-1 rounded-full">Obligatorio</span>
-                    </div>
-                    <textarea id="general-notes" rows="3" placeholder="Ej: Ambientes limpios, mantenimiento de caldera realizado, visitas familiares del día, eventualidades de infraestructura..." class="w-full text-sm p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"></textarea>
-                </div>
-
-                <!-- Registro de Novedades específicas de Residentes -->
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-                    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-4">
-                        <div>
-                            <h2 class="text-base font-bold text-slate-800 flex items-center space-x-2">
-                                <i data-lucide="stethoscope" class="w-5 h-5 text-indigo-600"></i>
-                                <span>Reporte Clínico y Novedades por Residente</span>
-                            </h2>
-                            <p class="text-xs text-slate-500">Registra cambios de medicación, caídas, signos vitales alterados o síntomas.</p>
-                        </div>
-                        <button onclick="openAddNoteModal()" class="inline-flex items-center space-x-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-colors">
-                            <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                            <span>Añadir Registro</span>
-                        </button>
-                    </div>
-
-                    <!-- Lista de registros ingresados para este turno -->
-                    <div id="current-shift-logs" class="space-y-3">
-                        <!-- Carga dinámica -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Columna Derecha: Checklist de Verificación y Cierre -->
-            <div class="space-y-6">
-                
-                <!-- Lista de Verificación Obligatoria -->
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-                    <h2 class="text-base font-bold text-slate-800 mb-3 flex items-center space-x-2">
-                        <i data-lucide="check-square" class="w-5 h-5 text-emerald-600"></i>
-                        <span>Checklist de Verificación</span>
-                    </h2>
-                    <p class="text-xs text-slate-500 mb-4">Verifica antes de entregar el turno al equipo entrante.</p>
-
-                    <div class="space-y-3 text-sm" id="checklist-container">
-                        <label class="flex items-start space-x-3 cursor-pointer p-2 rounded hover:bg-slate-50 transition">
-                            <input type="checkbox" class="checklist-item mt-0.5 rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4">
-                            <span class="text-slate-700 text-xs sm:text-sm">Entrega de canastos con insumos personales.</span>
-                        </label>
-                        <label class="flex items-start space-x-3 cursor-pointer p-2 rounded hover:bg-slate-50 transition">
-                            <input type="checkbox" class="checklist-item mt-0.5 rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4">
-                            <span class="text-slate-700 text-xs sm:text-sm">Higiene, cambios de pañal y posturales completados.</span>
-                        </label>
-                        <label class="flex items-start space-x-3 cursor-pointer p-2 rounded hover:bg-slate-50 transition">
-                            <input type="checkbox" class="checklist-item mt-0.5 rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4">
-                            <span class="text-slate-700 text-xs sm:text-sm">Hidratación diaria.</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- Personal del Turno & Firma -->
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
-                    <h2 class="text-base font-bold text-slate-800 flex items-center space-x-2">
-                        <i data-lucide="shield-check" class="w-5 h-5 text-indigo-600"></i>
-                        <span>Firmas y Conformidad</span>
-                    </h2>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Entrega (Saliente):</label>
-                        <input type="text" id="outgoing-staff" value="Enf. Patricia R. / TENS Carlos M." class="w-full text-xs p-2 border border-slate-300 rounded focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Recibe (Entrante):</label>
-                        <input type="text" id="incoming-staff" placeholder="Nombre de enfermero/a que recibe" class="w-full text-xs p-2 border border-slate-300 rounded focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                    </div>
-
-                    <div class="pt-2 border-t border-slate-100 flex flex-col gap-2">
-                        <button onclick="saveAndFinalizeShift()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm flex items-center justify-center space-x-2 text-sm transition-colors">
-                            <i data-lucide="save" class="w-4 h-4"></i>
-                            <span>Finalizar y Guardar Turno</span>
-                        </button>
-                        <button onclick="window.print()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2 px-4 rounded-lg flex items-center justify-center space-x-2 text-xs transition-colors">
-                            <i data-lucide="printer" class="w-4 h-4"></i>
-                            <span>Imprimir Reporte del Turno</span>
-                        </button>
-                    </div>
-                </div>
-
-            </div>
+      <!-- SELECCIÓN DE JEFE DE TURNO Y FECHA -->
+      <div class="flex flex-wrap items-center gap-3 bg-slate-100 p-2 rounded-xl border border-slate-200 text-sm">
+        <div>
+          <label class="block text-xs text-slate-500 font-semibold">Jefe de Turno:</label>
+          <select id="currentSupervisorSelect" onchange="changeSupervisor(this.value)" class="bg-white border border-slate-300 rounded-md px-2 py-1 font-semibold text-slate-700">
+            <!-- Cargado dinámicamente -->
+          </select>
         </div>
-
-        <!-- SECCIÓN 2: LISTA DE RESIDENTES -->
-        <div id="tab-residents" class="hidden space-y-4">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                <div>
-                    <h2 class="text-lg font-bold text-slate-800">Directorio de Residentes</h2>
-                    <p class="text-xs text-slate-500">Registra y administra las fichas básicas y de salud de los adultos mayores.</p>
-                </div>
-                <div class="flex items-center gap-2 w-full sm:w-auto">
-                    <input type="text" id="resident-search" onkeyup="filterResidents()" placeholder="Buscar residente..." class="w-full sm:w-60 text-xs p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <button onclick="openAddResidentModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-3 py-2 rounded-lg flex items-center space-x-1 whitespace-nowrap">
-                        <i data-lucide="user-plus" class="w-4 h-4"></i>
-                        <span>Nuevo Residente</span>
-                    </button>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="residents-grid">
-                <!-- Residentes vacíos inicialmente para ingreso manual -->
-            </div>
+        <div>
+          <label class="block text-xs text-slate-500 font-semibold">Fecha del Turno:</label>
+          <input type="date" id="shiftDateInput" class="bg-white border border-slate-300 rounded-md px-2 py-1 font-semibold text-slate-700">
         </div>
-
-        <!-- SECCIÓN 3: HISTÓRICO DE ENTREGAS -->
-        <div id="tab-history" class="hidden space-y-4">
-            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-4">
-                <div>
-                    <h2 class="text-lg font-bold text-slate-800">Histórico de Turnos Guardados</h2>
-                    <p class="text-xs text-slate-500">Consulta los registros de turnos pasados para trazabilidad médica.</p>
-                </div>
-                <div class="flex flex-wrap gap-2">
-                    <button onclick="exportFullBackup()" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold px-3 py-2 rounded-lg flex items-center space-x-1.5 border border-indigo-200">
-                        <i data-lucide="shield-check" class="w-4 h-4"></i>
-                        <span>Respaldar Datos (JSON)</span>
-                    </button>
-                    <button onclick="document.getElementById('restore-file-input').click()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-2 rounded-lg flex items-center space-x-1.5 border border-slate-300">
-                        <i data-lucide="upload" class="w-4 h-4"></i>
-                        <span>Restaurar Copia</span>
-                    </button>
-                    <input type="file" id="restore-file-input" class="hidden" accept=".json" onchange="restoreBackup(event)">
-                    <button onclick="exportHistoryCSV()" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold px-3 py-2 rounded-lg flex items-center space-x-1.5 border border-emerald-200">
-                        <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
-                        <span>Excel / CSV</span>
-                    </button>
-                </div>
-            </div>
-
-        <!-- SECCIÓN 4: CONFIGURACIÓN DE TURNOS Y PERFILES -->
-        <div id="tab-config" class="hidden space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
-                <!-- Ajustes de Horarios de Turnos -->
-                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                    <div class="flex items-center justify-between border-b pb-3">
-                        <h2 class="text-base font-bold text-slate-800 flex items-center space-x-2">
-                            <i data-lucide="clock" class="w-5 h-5 text-indigo-600"></i>
-                            <span>Administrar Horarios de Turnos</span>
-                        </h2>
-                    </div>
-                    <form id="shift-config-form" onsubmit="addCustomShift(event)" class="space-y-3">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">Nombre del Turno y Horario</label>
-                            <input type="text" id="new-shift-name" placeholder="Ej: Noche A (20:00 - 08:00)" required class="w-full text-xs p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                        </div>
-                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-3 rounded-lg text-xs flex items-center justify-center space-x-1.5 transition">
-                            <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                            <span>Agregar Nuevo Turno</span>
-                        </button>
-                    </form>
-                    <div class="mt-4">
-                        <label class="block text-xs font-semibold text-slate-700 mb-2">Turnos Configurados actualmente:</label>
-                        <div id="shift-list-container" class="space-y-2 text-xs">
-                            <!-- Lista cargada dinámicamente -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Perfiles de Jefes de Turno / Enfermeros -->
-                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                    <div class="flex items-center justify-between border-b pb-3">
-                        <h2 class="text-base font-bold text-slate-800 flex items-center space-x-2">
-                            <i data-lucide="users" class="w-5 h-5 text-indigo-600"></i>
-                            <span>Perfiles de Jefes de Turno</span>
-                        </h2>
-                    </div>
-                    <form id="supervisor-config-form" onsubmit="addCustomSupervisor(event)" class="space-y-3">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">Nombre y Cargo del Responsable</label>
-                            <input type="text" id="new-supervisor-name" placeholder="Ej: Enf. Francisco Soto" required class="w-full text-xs p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                        </div>
-                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-3 rounded-lg text-xs flex items-center justify-center space-x-1.5 transition">
-                            <i data-lucide="user-plus" class="w-4 h-4"></i>
-                            <span>Agregar Jefe de Turno</span>
-                        </button>
-                    </form>
-                    <div class="mt-4">
-                        <label class="block text-xs font-semibold text-slate-700 mb-2">Jefes de Turno registrados:</label>
-                        <div id="supervisor-list-container" class="space-y-2 text-xs">
-                            <!-- Lista cargada dinámicamente -->
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+        <div>
+          <label class="block text-xs text-slate-500 font-semibold">Horario:</label>
+          <select id="shiftTypeSelect" class="bg-white border border-slate-300 rounded-md px-2 py-1 font-semibold text-slate-700">
+            <!-- Cargado dinámicamente -->
+          </select>
         </div>
+      </div>
 
-    <!-- MODAL: REGISTRAR NUEVO RESIDENTE -->
-    <div id="add-resident-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden no-print">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 transform transition-all">
-            <div class="flex justify-between items-center pb-3 border-b border-slate-100">
-                <h3 class="text-base font-bold text-slate-800 flex items-center space-x-2">
-                    <i data-lucide="user-plus" class="w-5 h-5 text-indigo-600"></i>
-                    <span>Ficha Nuevo Residente</span>
-                </h3>
-                <button onclick="closeAddResidentModal()" class="text-slate-400 hover:text-slate-600">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
-            </div>
-
-            <form id="resident-form" onsubmit="saveResident(event)" class="space-y-3 mt-3">
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Nombre Completo *</label>
-                        <input type="text" id="res-name" required placeholder="Ej: Maria González" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Habitación *</label>
-                        <input type="text" id="res-room" required placeholder="Ej: Hab. 101" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Edad</label>
-                        <input type="number" id="res-age" placeholder="Ej: 80" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">Nivel Dependencia</label>
-                        <select id="res-dependence" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                            <option value="Autovalente">Autovalente</option>
-                            <option value="Leve">Leve</option>
-                            <option value="Moderada">Moderada</option>
-                            <option value="Severa">Severa</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Diagnósticos / Datos de Salud *</label>
-                    <textarea id="res-diagnosis" rows="2" required placeholder="Ej: Hipertensión, Diabetes, Alergia a Penicilina..." class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">Estado / Cuidados iniciales</label>
-                    <select id="res-status" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                        <option value="Estable">Estable</option>
-                        <option value="Observación">Observación</option>
-                        <option value="Cuidados Especiales">Cuidados Especiales</option>
-                    </select>
-                </div>
-
-                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-100">
-                    <button type="button" onclick="closeAddResidentModal()" class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg">Cancelar</button>
-                    <button type="submit" class="px-4 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow">Guardar Residente</button>
-                </div>
-            </form>
-        </div>
     </div>
+  </header>
 
-    <!-- MODAL CUSTOM NOTIFICACIONES -->
-    <div id="notification-toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 transition-opacity duration-300 opacity-0 pointer-events-none z-50">
-        <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400" id="toast-icon"></i>
-        <span id="toast-message" class="text-xs font-medium">Operación completada</span>
-    </div>
+  <!-- NAVEGACIÓN PRINCIPAL -->
+  <main class="max-w-6xl mx-auto px-4 mt-6">
+    <nav class="flex border-b border-slate-200 mb-6 gap-2 overflow-x-auto pb-1">
+      <button onclick="switchTab('tab-entrega')" id="btn-tab-entrega" class="tab-btn px-4 py-2 font-bold text-sm rounded-t-lg bg-sky-600 text-white border-b-2 border-sky-600">
+        📝 Entrega de Turno
+      </button>
+      <button onclick="switchTab('tab-residentes')" id="btn-tab-residentes" class="tab-btn px-4 py-2 font-bold text-sm rounded-t-lg bg-white text-slate-600 hover:bg-slate-100 border-b-2 border-transparent">
+        👴 Ficha de Residentes
+      </button>
+      <button onclick="switchTab('tab-historico')" id="btn-tab-historico" class="tab-btn px-4 py-2 font-bold text-sm rounded-t-lg bg-white text-slate-600 hover:bg-slate-100 border-b-2 border-transparent">
+        📚 Histórico de Entregas
+      </button>
+      <button onclick="switchTab('tab-config')" id="btn-tab-config" class="tab-btn px-4 py-2 font-bold text-sm rounded-t-lg bg-white text-slate-600 hover:bg-slate-100 border-b-2 border-transparent">
+        ⚙️ Configurar Turnos y Perfiles
+      </button>
+    </nav>
 
-    <!-- VISTA EXCLUSIVA PARA IMPRESIÓN -->
-    <div class="hidden print-only p-8">
-        <div class="text-center border-b pb-4 mb-4">
-            <h1 class="text-2xl font-bold">Residencia de Adulto Mayor "Saint Joseph"</h1>
-            <h2 class="text-lg font-semibold text-gray-700">INFORME OFICIAL DE ENTREGA DE TURNO</h2>
-            <p class="text-xs text-gray-500 mt-1">Fecha: <span id="print-date"></span> | Turno: <span id="print-shift"></span></p>
+    <!-- PESTAÑA 1: ENTREGA DE TURNO -->
+    <section id="tab-entrega" class="tab-content">
+      
+      <!-- CHECKLIST DE VERIFICACIÓN -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-6">
+        <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
+          ☑️ Checklist de Verificación de Turno
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-100">
+            <input type="checkbox" id="chk1" class="w-5 h-5 text-sky-600 rounded">
+            <span class="text-sm font-medium text-slate-700">Entrega de canastos con insumos personales</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-100">
+            <input type="checkbox" id="chk2" class="w-5 h-5 text-sky-600 rounded">
+            <span class="text-sm font-medium text-slate-700">Higiene, cambios de pañal y posturales completados</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-100">
+            <input type="checkbox" id="chk3" class="w-5 h-5 text-sky-600 rounded">
+            <span class="text-sm font-medium text-slate-700">Hidratación diaria</span>
+          </label>
         </div>
+      </div>
 
-        <div class="mb-6">
-            <h3 class="font-bold border-b text-sm mb-2">1. OBSERVACIONES GENERALES DE LA RESIDENCIA</h3>
-            <p class="text-xs text-gray-800" id="print-general-notes">Sin observaciones generales.</p>
+      <!-- NOVEDADES GENERALES -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-6">
+        <h3 class="text-base font-bold text-slate-800 mb-2">📢 Novedades Generales de la Residencia</h3>
+        <textarea id="generalNotes" rows="3" placeholder="Escriba avisos generales, visitas médicas, entregas de insumos o novedades del turno..." class="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-sky-500"></textarea>
+      </div>
+
+      <!-- OBSERVACIONES POR RESIDENTE -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-6">
+        <h3 class="text-base font-bold text-slate-800 mb-4">🩺 Observaciones por Residente</h3>
+        <div id="residentShiftCards" class="space-y-4">
+          <!-- Cargado dinámicamente -->
         </div>
+      </div>
 
-        <div class="mb-6">
-            <h3 class="font-bold border-b text-sm mb-2">2. REPORTE DE NOVEDADES POR RESIDENTE</h3>
-            <div id="print-resident-logs" class="space-y-3 text-xs">
-                <!-- Se llena al imprimir -->
-            </div>
-        </div>
+      <!-- BOTONES DE ACCIÓN -->
+      <div class="flex flex-wrap gap-3 justify-end">
+        <button onclick="saveShiftLog()" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-6 py-3 rounded-xl shadow transition flex items-center gap-2">
+          💾 Finalizar y Registrar Entrega de Turno
+        </button>
+      </div>
+    </section>
 
-        <div class="mt-12 pt-8 border-t grid grid-cols-2 gap-8 text-center text-xs">
+    <!-- PESTAÑA 2: FICHA DE RESIDENTES -->
+    <section id="tab-residentes" class="tab-content hidden">
+      <!-- FORMULARIO AGREGAR RESIDENTE -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-6">
+        <h3 class="text-base font-bold text-slate-800 mb-4">➕ Registrar Nuevo Residente</h3>
+        <form id="residentForm" onsubmit="saveResident(event)" class="space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <p class="font-bold mb-8">____________________________________</p>
-                <p class="font-semibold" id="print-outgoing"></p>
-                <p class="text-gray-500">Firma Entregante (Turno Saliente)</p>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Nombre Completo del Residente *</label>
+              <input type="text" id="resName" required placeholder="Ej. María González" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500">
             </div>
             <div>
-                <p class="font-bold mb-8">____________________________________</p>
-                <p class="font-semibold" id="print-incoming"></p>
-                <p class="text-gray-500">Firma Receptor (Turno Entrante)</p>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Habitación / Cama *</label>
+              <input type="text" id="resRoom" required placeholder="Ej. Habitación 102 - Cama A" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500">
             </div>
-        </div>
-    </div>
-
-    <script>
-        // DATOS INICIALES CONFIGURADOS
-        let customShifts = [
-            "Día: 08:00 - 20:00 hrs.",
-            "Noche: 20:00 - 08:00 hrs."
-        ];
-
-        let supervisorsList = [
-            "Antonio González",
-            "Jennifer Soto",
-            "Katerin Sobarzo"
-        ];
-
-        // BASE DE DATOS INICIAL VACÍA PARA REGISTRO MANUAL DEL USUARIO
-        let residentsData = [];
-
-        let currentShiftLogs = [];
-
-        let historyShifts = [];
-
-        // CAMBIO DE PESTAÑAS (TAB SWITCHER)
-        function switchTab(tabName) {
-            const tabs = ['shift', 'residents', 'history', 'config'];
-            tabs.forEach(t => {
-                const el = document.getElementById(`tab-${t}`);
-                const btn = document.getElementById(`tab-btn-${t}`);
-                if (t === tabName) {
-                    if (el) el.classList.remove('hidden');
-                    if (btn) {
-                        btn.classList.add('border-indigo-600', 'text-indigo-600');
-                        btn.classList.remove('border-transparent', 'text-slate-500');
-                    }
-                } else {
-                    if (el) el.classList.add('hidden');
-                    if (btn) {
-                        btn.classList.remove('border-indigo-600', 'text-indigo-600');
-                        btn.classList.add('border-transparent', 'text-slate-500');
-                    }
-                }
-            });
-        }
-
-        // GESTIÓN DE CONFIGURACIÓN Y SELECCIONES DE TURNO / JEFES
-        function renderShiftOptions() {
-            const select = document.getElementById('shift-type');
-            if (!select) return;
-            select.innerHTML = customShifts.map(s => `<option value="${s}">${s}</option>`).join('');
-            
-            const configList = document.getElementById('shift-list-container');
-            if (configList) {
-                configList.innerHTML = customShifts.map((s, idx) => `
-                    <div class="flex items-center justify-between p-2 bg-slate-50 border rounded-lg">
-                        <span class="font-medium text-slate-700">${s}</span>
-                        ${customShifts.length > 1 ? `<button onclick="deleteCustomShift(${idx})" class="text-red-500 hover:text-red-700 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
-                    </div>
-                `).join('');
-            }
-            lucide.createIcons();
-        }
-
-        function renderSupervisorOptions() {
-            const select = document.getElementById('supervisor-select');
-            if (!select) return;
-            select.innerHTML = supervisorsList.map(sup => `<option value="${sup}">${sup}</option>`).join('');
-            changeSupervisor();
-
-            const configList = document.getElementById('supervisor-list-container');
-            if (configList) {
-                configList.innerHTML = supervisorsList.map((sup, idx) => `
-                    <div class="flex items-center justify-between p-2 bg-slate-50 border rounded-lg">
-                        <span class="font-medium text-slate-700">${sup}</span>
-                        ${supervisorsList.length > 1 ? `<button onclick="deleteCustomSupervisor(${idx})" class="text-red-500 hover:text-red-700 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
-                    </div>
-                `).join('');
-            }
-            lucide.createIcons();
-        }
-
-        function changeSupervisor() {
-            const val = document.getElementById('supervisor-select').value;
-            const outgoingInput = document.getElementById('outgoing-staff');
-            if (outgoingInput) {
-                outgoingInput.value = `Enf. ${val}`;
-            }
-        }
-
-        function addCustomShift(e) {
-            e.preventDefault();
-            const input = document.getElementById('new-shift-name');
-            const val = input.value.trim();
-            if (val) {
-                customShifts.push(val);
-                input.value = '';
-                renderShiftOptions();
-                showToast("Nuevo turno agregado");
-            }
-        }
-
-        function deleteCustomShift(idx) {
-            customShifts.splice(idx, 1);
-            renderShiftOptions();
-            showToast("Turno eliminado");
-        }
-
-        function addCustomSupervisor(e) {
-            e.preventDefault();
-            const input = document.getElementById('new-supervisor-name');
-            const val = input.value.trim();
-            if (val) {
-                supervisorsList.push(val);
-                input.value = '';
-                renderSupervisorOptions();
-                showToast("Jefe de turno registrado");
-            }
-        }
-
-        function deleteCustomSupervisor(idx) {
-            supervisorsList.splice(idx, 1);
-            renderSupervisorOptions();
-            showToast("Jefe de turno eliminado");
-        }
-
-        // NOVEDADES REGISTRADAS EN TURNO ACTUAL
-        function openAddNoteModal() {
-            if (residentsData.length === 0) {
-                showToast("Debes registrar al menos un residente primero", "error");
-                switchTab('residents');
-                openAddResidentModal();
-                return;
-            }
-            let modal = document.getElementById('add-note-modal');
-            if (!modal) {
-                createAddNoteModal();
-            }
-            document.getElementById('add-note-modal').classList.remove('hidden');
-        }
-
-        function closeAddNoteModal() {
-            const modal = document.getElementById('add-note-modal');
-            if (modal) modal.classList.add('hidden');
-        }
-
-        function createAddNoteModal() {
-            const modalHtml = `
-            <div id="add-note-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden no-print">
-                <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100">
-                    <div class="flex justify-between items-center pb-3 border-b border-slate-100">
-                        <h3 class="text-base font-bold text-slate-800 flex items-center space-x-2">
-                            <i data-lucide="plus-circle" class="w-5 h-5 text-indigo-600"></i>
-                            <span>Registrar Novedad Clínica</span>
-                        </h3>
-                        <button onclick="closeAddNoteModal()" class="text-slate-400 hover:text-slate-600">
-                            <i data-lucide="x" class="w-5 h-5"></i>
-                        </button>
-                    </div>
-                    <form onsubmit="saveNote(event)" class="space-y-3 mt-3">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">Residente *</label>
-                            <select id="modal-resident" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none" required></select>
-                        </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Categoría</label>
-                                <select id="modal-category" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                                    <option value="Medicación">Cambio Medicación</option>
-                                    <option value="Constantes Vitales">Constantes Vitales</option>
-                                    <option value="Caída / Evento">Caída / Evento</option>
-                                    <option value="Estado de Ánimo">Estado de Ánimo</option>
-                                    <option value="General">General / Otro</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Prioridad</label>
-                                <select id="modal-priority" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                                    <option value="Normal">Normal</option>
-                                    <option value="Urgente">Urgente</option>
-                                    <option value="Atención Especial">Atención Especial</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">Signos Vitales (Opcional)</label>
-                            <input type="text" id="modal-vitals" placeholder="Ej: PA 130/80 - FC 72 - Sat 98%" class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">Detalle / Evolución *</label>
-                            <textarea id="modal-details" rows="3" required placeholder="Describe lo sucedido durante el turno..." class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
-                        </div>
-                        <div class="flex justify-end space-x-2 pt-3 border-t border-slate-100">
-                            <button type="button" onclick="closeAddNoteModal()" class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg">Cancelar</button>
-                            <button type="submit" class="px-4 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow">Guardar Novedad</button>
-                        </div>
-                    </form>
-                </div>
-            </div>`;
-            document.body.insertAdjacentHTML('beforeend', modalHtml);
-            populateResidentSelect();
-            lucide.createIcons();
-        }
-
-        function renderShiftLogs() {
-            const container = document.getElementById('current-shift-logs');
-            const printContainer = document.getElementById('print-resident-logs');
-            if (!container) return;
-
-            if (currentShiftLogs.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-8 bg-slate-50 rounded-lg border border-dashed border-slate-200">
-                        <i data-lucide="clipboard-list" class="w-8 h-8 text-slate-300 mx-auto mb-2"></i>
-                        <p class="text-xs text-slate-500">No hay novedades registradas para este turno aún.</p>
-                    </div>
-                `;
-                if (printContainer) printContainer.innerHTML = '<p class="text-gray-500">Sin novedades reportadas.</p>';
-                lucide.createIcons();
-                return;
-            }
-
-            container.innerHTML = currentShiftLogs.map(l => `
-                <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 flex flex-col space-y-1.5">
-                    <div class="flex justify-between items-start">
-                        <div class="flex items-center space-x-2">
-                            <span class="font-bold text-xs text-indigo-700">${l.residentName}</span>
-                            <span class="text-[10px] bg-slate-200 text-slate-700 font-semibold px-2 py-0.5 rounded">${l.category}</span>
-                            <span class="text-[10px] ${l.priority === 'Urgente' ? 'bg-red-100 text-red-700 font-bold' : 'bg-amber-100 text-amber-700'} px-2 py-0.5 rounded">${l.priority}</span>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="text-[11px] text-slate-400 font-medium">${l.time} hrs</span>
-                            <button onclick="deleteNote(${l.id})" class="text-slate-300 hover:text-red-500 p-0.5">
-                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                            </button>
-                        </div>
-                    </div>
-                    ${l.vitals ? `<p class="text-xs font-mono bg-white p-1 rounded border border-slate-200 text-slate-600 inline-block w-fit">🩸 ${l.vitals}</p>` : ''}
-                    <p class="text-xs text-slate-700 whitespace-pre-line">${l.details}</p>
-                </div>
-            `).join('');
-
-            if (printContainer) {
-                printContainer.innerHTML = currentShiftLogs.map(l => `
-                    <div class="p-2 border-b border-gray-200">
-                        <p class="font-bold">${l.residentName} - <span class="font-normal">${l.category} (${l.priority})</span> - <span class="text-gray-500">${l.time} hrs</span></p>
-                        ${l.vitals ? `<p class="italic">Constantes: ${l.vitals}</p>` : ''}
-                        <p>${l.details}</p>
-                    </div>
-                `).join('');
-            }
-
-            lucide.createIcons();
-        }
-
-        // INICIALIZACIÓN
-        window.onload = function() {
-            // Establecer fecha por defecto en el selector de fecha (Calendario)
-            const today = new Date();
-            const yyyy = today.getFullYear();
-            const mm = String(today.getMonth() + 1).padStart(2, '0');
-            const dd = String(today.getDate()).padStart(2, '0');
-            const dateInput = document.getElementById('shift-date-picker');
-            if (dateInput) {
-                dateInput.value = `${yyyy}-${mm}-${dd}`;
-                updateShiftDate();
-            }
-
-            renderShiftOptions();
-            renderSupervisorOptions();
-            renderShiftLogs();
-            renderResidents();
-            renderHistory();
-            populateResidentSelect();
-            updateStats();
-
-            // Inicializar Lucide Icons
-            lucide.createIcons();
-        };
-
-        function updateShiftDate() {
-            const input = document.getElementById('shift-date-picker');
-            if (!input) return;
-            const val = input.value;
-            if (val) {
-                const parts = val.split('-');
-                const dateFormatted = `${parts[2]}/${parts[1]}/${parts[0]}`;
-                const headerDate = document.getElementById('header-date');
-                if (headerDate) headerDate.innerText = dateFormatted;
-                const printDate = document.getElementById('print-date');
-                if (printDate) printDate.innerText = dateFormatted;
-            }
-        }
-
-        // GESTIÓN DE RESIDENTES
-        function openAddResidentModal() {
-            document.getElementById('add-resident-modal').classList.remove('hidden');
-        }
-
-        function closeAddResidentModal() {
-            document.getElementById('add-resident-modal').classList.add('hidden');
-            document.getElementById('resident-form').reset();
-        }
-
-        function saveResident(e) {
-            e.preventDefault();
-            const newRes = {
-                id: Date.now(),
-                name: document.getElementById('res-name').value.trim(),
-                room: document.getElementById('res-room').value.trim(),
-                age: document.getElementById('res-age').value || '--',
-                dependence: document.getElementById('res-dependence').value,
-                diagnosis: document.getElementById('res-diagnosis').value.trim(),
-                status: document.getElementById('res-status').value
-            };
-
-            residentsData.push(newRes);
-            renderResidents();
-            populateResidentSelect();
-            updateStats();
-            closeAddResidentModal();
-            showToast("Residente registrado con éxito");
-        }
-
-        function deleteResident(id) {
-            residentsData = residentsData.filter(r => r.id !== id);
-            renderResidents();
-            populateResidentSelect();
-            updateStats();
-            showToast("Residente eliminado");
-        }
-
-        // SECCIÓN RESIDENTES
-        function renderResidents() {
-            const grid = document.getElementById('residents-grid');
-            if (residentsData.length === 0) {
-                grid.innerHTML = `
-                    <div class="col-span-full text-center py-12 bg-white rounded-xl border border-dashed border-slate-300">
-                        <i data-lucide="users" class="w-12 h-12 text-slate-300 mx-auto mb-2"></i>
-                        <p class="text-sm font-semibold text-slate-600">No hay residentes registrados aún.</p>
-                        <p class="text-xs text-slate-400 mt-1">Haz clic en el botón "Nuevo Residente" arriba para ingresar el primero.</p>
-                    </div>
-                `;
-                lucide.createIcons();
-                return;
-            }
-
-            grid.innerHTML = residentsData.map(r => `
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-3">
-                    <div>
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <span class="text-[10px] font-bold uppercase tracking-wider bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded border border-indigo-100">${r.room}</span>
-                                <h3 class="font-bold text-sm text-slate-800 mt-1">${r.name}</h3>
-                            </div>
-                            <div class="flex items-center space-x-1">
-                                <span class="text-xs text-slate-400 font-medium">${r.age} años</span>
-                                <button onclick="deleteResident(${r.id})" class="text-slate-300 hover:text-red-500 p-1">
-                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="mt-3 space-y-1 text-xs">
-                            <p class="text-slate-500"><span class="font-semibold text-slate-700">Dependencia:</span> ${r.dependence}</p>
-                            <p class="text-slate-500"><span class="font-semibold text-slate-700">Diagnóstico / Salud:</span> ${r.diagnosis}</p>
-                        </div>
-                    </div>
-                    <div class="pt-2 border-t border-slate-100 flex justify-between items-center text-xs">
-                        <span class="text-slate-400">Estado actual:</span>
-                        <span class="font-semibold px-2 py-0.5 rounded ${r.status === 'Estable' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}">${r.status}</span>
-                    </div>
-                </div>
-            `).join('');
-            lucide.createIcons();
-        }
-
-        function populateResidentSelect() {
-            const select = document.getElementById('modal-resident');
-            if (residentsData.length === 0) {
-                select.innerHTML = `<option value="">-- Primero registra un residente --</option>`;
-                return;
-            }
-            select.innerHTML = residentsData.map(r => `
-                <option value="${r.id}">${r.name} (${r.room})</option>
-            `).join('');
-        }
-
-        function saveNote(e) {
-            e.preventDefault();
-            const resId = parseInt(document.getElementById('modal-resident').value);
-            const resident = residentsData.find(r => r.id === resId);
-
-            const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-
-            const newLog = {
-                id: Date.now(),
-                residentId: resId,
-                residentName: `${resident.name} (${resident.room})`,
-                category: document.getElementById('modal-category').value,
-                priority: document.getElementById('modal-priority').value,
-                vitals: document.getElementById('modal-vitals').value,
-                details: document.getElementById('modal-details').value,
-                time: `${hours}:${minutes}`
-            };
-
-            currentShiftLogs.unshift(newLog);
-            renderShiftLogs();
-            closeAddNoteModal();
-            updateStats();
-            showToast("Novedad registrada correctamente");
-        }
-
-        function deleteNote(id) {
-            currentShiftLogs = currentShiftLogs.filter(l => l.id !== id);
-            renderShiftLogs();
-            updateStats();
-            showToast("Registro eliminado");
-        }
-
-        // SECCIÓN RESIDENTES
-        function renderResidents() {
-            const grid = document.getElementById('residents-grid');
-            grid.innerHTML = residentsData.map(r => `
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-3">
-                    <div>
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <span class="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded">${r.room}</span>
-                                <h3 class="font-bold text-sm text-slate-800 mt-1">${r.name}</h3>
-                            </div>
-                            <span class="text-xs text-slate-400 font-medium">${r.age} años</span>
-                        </div>
-                        <div class="mt-3 space-y-1 text-xs">
-                            <p class="text-slate-500"><span class="font-semibold text-slate-700">Dependencia:</span> ${r.dependence}</p>
-                            <p class="text-slate-500"><span class="font-semibold text-slate-700">Diagnóstico:</span> ${r.diagnosis}</p>
-                        </div>
-                    </div>
-                    <div class="pt-2 border-t border-slate-100 flex justify-between items-center text-xs">
-                        <span class="text-slate-400">Estado general:</span>
-                        <span class="font-semibold px-2 py-0.5 rounded ${r.status === 'Estable' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}">${r.status}</span>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function filterResidents() {
-            const query = document.getElementById('resident-search').value.toLowerCase();
-            const filtered = residentsData.filter(r => 
-                r.name.toLowerCase().includes(query) || 
-                r.room.toLowerCase().includes(query)
-            );
-
-            const grid = document.getElementById('residents-grid');
-            grid.innerHTML = filtered.map(r => `
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-3">
-                    <div>
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <span class="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded">${r.room}</span>
-                                <h3 class="font-bold text-sm text-slate-800 mt-1">${r.name}</h3>
-                            </div>
-                            <span class="text-xs text-slate-400 font-medium">${r.age} años</span>
-                        </div>
-                        <div class="mt-3 space-y-1 text-xs">
-                            <p class="text-slate-500"><span class="font-semibold text-slate-700">Dependencia:</span> ${r.dependence}</p>
-                            <p class="text-slate-500"><span class="font-semibold text-slate-700">Diagnóstico:</span> ${r.diagnosis}</p>
-                        </div>
-                    </div>
-                    <div class="pt-2 border-t border-slate-100 flex justify-between items-center text-xs">
-                        <span class="text-slate-400">Estado general:</span>
-                        <span class="font-semibold px-2 py-0.5 rounded ${r.status === 'Estable' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}">${r.status}</span>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // SECCIÓN HISTÓRICO
-        function renderHistory() {
-            const tbody = document.getElementById('history-table-body');
-            if (historyShifts.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">No hay turnos históricos archivados.</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = historyShifts.map(h => `
-                <tr class="hover:bg-slate-50">
-                    <td class="p-3 font-medium text-slate-800">${h.date}</td>
-                    <td class="p-3">${h.shift}</td>
-                    <td class="p-3">${h.outgoing}</td>
-                    <td class="p-3">${h.incoming}</td>
-                    <td class="p-3 font-semibold text-indigo-600">${h.notesCount} novedades</td>
-                    <td class="p-3 text-center">
-                        <button onclick="viewHistoryDetail('${h.id}')" class="text-slate-500 hover:text-indigo-600 p-1">
-                            <i data-lucide="eye" class="w-4 h-4"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-
-            lucide.createIcons();
-        }
-
-        // GUARDAR Y FINALIZAR TURNO
-        function saveAndFinalizeShift() {
-            const outgoing = document.getElementById('outgoing-staff').value;
-            const incoming = document.getElementById('incoming-staff').value;
-            const generalNotes = document.getElementById('general-notes').value;
-            const shiftType = document.getElementById('shift-type').value;
-
-            if (!incoming.trim()) {
-                showToast("Ingresa el nombre del personal que recibe el turno", "error");
-                return;
-            }
-
-            // Preparar datos para imprimir antes de resetear
-            document.getElementById('print-shift').innerText = shiftType;
-            document.getElementById('print-general-notes').innerText = generalNotes || "Sin observaciones generales.";
-            document.getElementById('print-outgoing').innerText = outgoing;
-            document.getElementById('print-incoming').innerText = incoming;
-
-            // Guardar en histórico
-            const today = new Date();
-            const dateStr = today.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
-
-            const newHistoryItem = {
-                id: `T-${Date.now()}`,
-                date: dateStr,
-                shift: shiftType,
-                outgoing: outgoing,
-                incoming: incoming,
-                notesCount: currentShiftLogs.length,
-                generalNotes: generalNotes
-            };
-
-            historyShifts.unshift(newHistoryItem);
-            renderHistory();
-
-            showToast("Turno finalizado y guardado con éxito");
-
-            // Resetear para siguiente turno
-            currentShiftLogs = [];
-            document.getElementById('general-notes').value = "";
-            document.getElementById('incoming-staff').value = "";
-            document.querySelectorAll('.checklist-item').forEach(cb => cb.checked = false);
-            renderShiftLogs();
-            updateStats();
-        }
-
-        // ESTADÍSTICAS RÁPIDAS
-        function updateStats() {
-            document.getElementById('stat-total').innerText = residentsData.length;
-            document.getElementById('stat-alerts').innerText = currentShiftLogs.length;
-            
-            const obsCount = residentsData.filter(r => r.status === 'Observación').length;
-            document.getElementById('stat-obs').innerText = obsCount;
-
-            const medsCount = currentShiftLogs.filter(l => l.category === 'Cambio Medicación').length;
-            document.getElementById('stat-meds').innerText = medsCount;
-        }
-
-        // TOAST CUSTOM
-        function showToast(msg, type = "success") {
-            const toast = document.getElementById('notification-toast');
-            const message = document.getElementById('toast-message');
-            const icon = document.getElementById('toast-icon');
-
-            message.innerText = msg;
-            toast.classList.remove('opacity-0', 'pointer-events-none');
-            toast.classList.add('opacity-100');
-
-            setTimeout(() => {
-                toast.classList.remove('opacity-100');
-                toast.classList.add('opacity-0', 'pointer-events-none');
-            }, 3000);
-        }
-
-        // EXPORTACIÓN A CSV
-        function exportHistoryCSV() {
-            let csvContent = "data:text/csv;charset=utf-8,Fecha,Turno,Entrega,Recibe,Cantidad Novedades\n";
-            historyShifts.forEach(h => {
-                csvContent += `"${h.date}","${h.shift}","${h.outgoing}","${h.incoming}",${h.notesCount}\n`;
-            });
-
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `historico_turnos_residencia.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        // RESPALDO COMPLETO EN JSON (GUARDA RESIDENTES E HISTORIAL)
-        function exportFullBackup() {
-            const backupData = {
-                version: "1.0",
-                exportDate: new Date().toISOString(),
-                residents: residentsData,
-                history: historyShifts
-            };
-
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `RESPALDO_RESIDENCIA_${new Date().toISOString().slice(0,10)}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-
-            showToast("Respaldo descargado correctamente");
-        }
-
-        // RESTAURAR COPIA DE SEGURIDAD DESDE ARCHIVO
-        function restoreBackup(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if (data.history) {
-                        historyShifts = data.history;
-                        renderHistory();
-                        showToast("Histórico restaurado con éxito");
-                    } else {
-                        showToast("El archivo no tiene el formato correcto", "error");
-                    }
-                } catch (err) {
-                    showToast("Error al leer el archivo de respaldo", "error");
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        function viewHistoryDetail(id) {
-            const item = historyShifts.find(h => h.id === id);
-            if (item) {
-                showToast(`Turno ${item.date} (${item.shift}): ${item.notesCount} novedades.`);
-            }
-        }
-    </script>
-</body>
-</html>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Nombre del Apoderado</label>
+              <input type="text" id="resGuardian" placeholder="Ej. Juan Pérez (Hijo)" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Teléfono del Apoderado</label>
+              <input type="tel" id="resGuardianPhone" placeholder="Ej. +56 9 1234 5678" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Grado de Dependencia</label>
+              <select id="resDep" class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500">
+                <option value="Leve">Leve</option>
+                <option value="Moderada">Moderada</option>
+                <option value="Severa">Severa</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1">Diagnósticos / Observaciones de Salud</label>
+              <input type="text" id="resDiag" placeholder="Ej. Hipertensión, Diabetes..." class="w-full border rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500">
+            </div>
+          </div>
+          <div class="flex justify-end">
+            <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2 rounded-lg text-sm shadow">
+              Guardar Residente
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- LISTA DE RESIDENTES -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+        <h3 class="text-base font-bold text-slate-800 mb-4">📋 Listado de Residentes Activos</h3>
+        <div id="residentsListContainer" class="grid grid-
