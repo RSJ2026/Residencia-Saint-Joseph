@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrega de Turno - Residencia Adulto Mayor</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            body {
+                background: white;
+                color: black;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col">
+
+    <!-- Header Principal -->
+    <header class="bg-indigo-700 text-white shadow-lg no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="p-2 bg-indigo-600 rounded-xl">
+                    <i data-lucide="heart-pulse" class="w-8 h-8 text-amber-300"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold leading-tight">Residencia "Saint Joseph"</h1>
+                    <p class="text-xs text-indigo-200">Sistema Digital de Entrega de Turnos En Enfermería y Cuidado</p>
+                </div>
+            </div>
+
+            <!-- Datos del Turno Actual -->
+            <div class="flex flex-wrap items-center gap-3 bg-indigo-800/60 p-2.5 rounded-xl border border-indigo-500/30 text-xs sm:text-sm">
+                <div class="flex items-center space-x-1.5">
+                    <i data-lucide="clock" class="w-4 h-4 text-indigo-300"></i>
+                    <span id="header-date" class="font-medium">--/--/----</span>
+                </div>
+                <span class="text-indigo-400">|</span>
+                <div class="flex items-center space-x-1">
+                    <span class="font-medium">Turno:</span>
+                    <select id="shift-type" class="bg-indigo-900 text-white rounded border border-indigo-400/40 px-2 py-0.5 text-xs focus:outline-none">
+                        <option value="Mañana (08:00 - 16:00)">Mañana (08:00 - 16:00)</option>
+                        <option value="Tarde (16:00 - 00:00)">Tarde (16:00 - 00:00)</option>
+                        <option value="Noche (00:00 - 08:00)">Noche (00:00 - 08:00)</option>
+                    </select>
+                </div>
+                <span class="text-indigo-400">|</span>
+                <div class="flex items-center space-x-1">
+                    <i data-lucide="user-check" class="w-4 h-4 text-indigo-300"></i>
+                    <span id="shift-user" class="font-medium">Enf. Patricia R.</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6">
+
+        <!-- Métricas Rápidas / Alertas de la Noche -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 no-print">
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Total Residentes</p>
+                    <p class="text-2xl font-bold text-slate-800 mt-1" id="stat-total">24</p>
+                </div>
+                <div class="p-3 bg-blue-50 text-blue-600 rounded-lg">
+                    <i data-lucide="users" class="w-6 h-6"></i>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Novedades Médicas</p>
+                    <p class="text-2xl font-bold text-amber-600 mt-1" id="stat-alerts">3</p>
+                </div>
+                <div class="p-3 bg-amber-50 text-amber-600 rounded-lg">
+                    <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">En Observación</p>
+                    <p class="text-2xl font-bold text-red-600 mt-1" id="stat-obs">2</p>
+                </div>
+                <div class="p-3 bg-red-50 text-red-600 rounded-lg">
+                    <i data-lucide="activity" class="w-6 h-6"></i>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Medicamentos Esp.</p>
+                    <p class="text-2xl font-bold text-emerald-600 mt-1" id="stat-meds">5</p>
+                </div>
+                <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg">
+                    <i data-lucide="pill" class="w-6 h-6"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navegación por pestañas -->
+        <div class="flex border-b border-slate-200 space-x-4 no-print overflow-x-auto">
+            <button id="tab-btn-shift" onclick="switchTab('shift')" class="py-3 px-4 text-sm font-semibold border-b-2 border-indigo-600 text-indigo-600 flex items-center space-x-2 whitespace-nowrap">
+                <i data-lucide="clipboard-edit" class="w-4 h-4"></i>
+                <span>Entrega de Turno Actual</span>
+            </button>
+            <button id="tab-btn-residents" onclick="switchTab('residents')" class="py-3 px-4 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center space-x-2 whitespace-nowrap">
+                <i data-lucide="user" class="w-4 h-4"></i>
+                <span>Ficha de Residentes</span>
+            </button>
+            <button id="tab-btn-history" onclick="switchTab('history')" class="py-3 px-4 text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center space-x-2 whitespace-nowrap">
+                <i data-lucide="history" class="w-4 h-4"></i>
+                <span>Histórico de Entregas</span>
+            </button>
+        </div>
+
+        <!-- SECCIÓN 1: ENTREGA DE TURNO ACTUAL -->
+        <div id="tab-shift" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Columna Izquierda & Centro: Novedades por Residente & Generales -->
+            <div class="lg:col-span-2 space-x-0 space-y-6">
+
+                <!-- Cuadro Resumen General del Turno -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-base font-bold text-slate-800 flex items-center space-x-2">
+                            <i data-lucide="file-text" class="w-5 h-5 text-indigo-600"></i>
+                            <span>Observaciones Generales de la Residencia</span>
+                        </h2>
+                        <span class="text-xs bg-indigo-50 text-indigo-700 font-medium px-2.5 py-1 rounded-full">Obligatorio</span>
+                    </div>
+                    <textarea id="general-notes" rows="3" placeholder="Ej: Ambientes limpios, mantenimiento de caldera realizado, visitas familiares del día, eventualidades de infraestructura..." class="w-full text-sm p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"></textarea>
+                </div>
+
+                <!-- Registro de Novedades específicas de Residentes -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 mb-4">
+                        <div>
+                            <h2 class="text-base font-bold text-slate-800 flex items-center space-x-2">
+                                <i data-lucide="stethoscope" class="w-5 h-5 text-indigo-600"></i>
+                                <span>Reporte Clínico y Novedades por Residente</span>
+                            </h2>
+                            <p class="text-xs text-slate-500">Registra cambios de medicación, caídas, signos vitales alterados o síntomas.</p>
+                        </div>
+                        <button onclick="openAddNoteModal()" class="inline-flex items-center space-x-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-3 py-2 rounded-lg transition-colors">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                            <span>Añadir Registro</span>
+                        </button>
+                    </div>
+
+                    <!-- Lista de registros ingresados para este turno -->
+                    <div id="current-shift-logs" class="space-y-3">
+                        <!-- Carga dinámica -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Checklist de Verificación y Cierre -->
+            <div class="space-y-6">
+                
+                <!-- Lista de Verificación Obligatoria -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+                    <h2 class="text-base font-bold text-slate-800 mb-3 flex items-center space-x-2">
+                        <i data-lucide="check-square" class="w-5 h-5 text-emerald-600"></i>
+                        <span>Checklist de Verificación</span>
+                    </h2>
+                    <p class="text-xs text-slate-500 mb-4">Verifica antes de entregar el turno al equipo entrante.</p>
+
+                    <div class="space-y-3 text-sm" id="checklist-container">
+                        <label class="flex items-start space-x-3 cursor-pointer p-2 rounded hover:bg-slate-50 transition">
+                            <input type="checkbox" class="checklist-item mt-0.5 rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4">
+                            <span class="text-slate-700 text-xs sm:text-sm">Conteo y entrega del botiquín / psicotrópicos ok.</span>
+                        </label>
+                        <label class="flex items-start space-x-3 cursor-pointer p-2 rounded hover:bg-slate-50 transition">
+                            <input type="checkbox" class="checklist-item mt-0.5 rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4">
+                            <span class="text-slate-700 text-xs sm:text-sm">Revisión de timbres de pánico y sensores de cama.</span>
+                        </label>
+                        <label class="flex items-start space-x-3 cursor-pointer p-2 rounded hover:bg-slate-50 transition">
+                            <input type="checkbox" class="checklist-item mt-0.5 rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4">
+                            <span class="text-slate-700 text-xs sm:text-sm">Higiene, cambios de pañal y posturales completados.</span>
+                        </label>
+                        <label class="flex items-start space-x-3 cursor-pointer p-2 rounded hover:bg-slate-50 transition">
+                            <input type="checkbox" class="checklist-item mt-0.5 rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4">
+                            <span class="text-slate-700 text-xs sm:text-sm">Llaves de acceso y equipos de comunicación entregados.</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Personal del Turno & Firma -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 space-y-4">
+                    <h2 class="text-base font-bold text-slate-800 flex items-center space-x-2">
+                        <i data-lucide="shield-check" class="w-5 h-5 text-indigo-600"></i>
+                        <span>Firmas y Conformidad</span>
+                    </h2>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Entrega (Saliente):</label>
+                        <input type="text" id="outgoing-staff" value="Enf. Patricia R. / TENS Carlos M." class="w-full text-xs p-2 border border-slate-300 rounded focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Recibe (Entrante):</label>
+                        <input type="text" id="incoming-staff" placeholder="Nombre de enfermero/a que recibe" class="w-full text-xs p-2 border border-slate-300 rounded focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+
+                    <div class="pt-2 border-t border-slate-100 flex flex-col gap-2">
+                        <button onclick="saveAndFinalizeShift()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-4 rounded-lg shadow-sm flex items-center justify-center space-x-2 text-sm transition-colors">
+                            <i data-lucide="save" class="w-4 h-4"></i>
+                            <span>Finalizar y Guardar Turno</span>
+                        </button>
+                        <button onclick="window.print()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2 px-4 rounded-lg flex items-center justify-center space-x-2 text-xs transition-colors">
+                            <i data-lucide="printer" class="w-4 h-4"></i>
+                            <span>Imprimir Reporte del Turno</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SECCIÓN 2: LISTA DE RESIDENTES -->
+        <div id="tab-residents" class="hidden space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800">Directorio de Residentes</h2>
+                    <p class="text-xs text-slate-500">Habitaciones, nivel de dependencia y observaciones continuas.</p>
+                </div>
+                <div class="w-full sm:w-64">
+                    <input type="text" id="resident-search" onkeyup="filterResidents()" placeholder="Buscar residente o hab..." class="w-full text-xs p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="residents-grid">
+                <!-- Residentes cargados dinámicamente -->
+            </div>
+        </div>
+
+        <!-- SECCIÓN 3: HISTÓRICO DE ENTREGAS -->
+        <div id="tab-history" class="hidden space-y-4">
+            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-800">Histórico de Turnos Guardados</h2>
+                    <p class="text-xs text-slate-500">Consulta los registros de turnos pasados para trazabilidad médica.</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="exportFullBackup()" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold px-3 py-2 rounded-lg flex items-center space-x-1.5 border border-indigo-200">
+                        <i data-lucide="shield-check" class="w-4 h-4"></i>
+                        <span>Respaldar Datos (JSON)</span>
+                    </button>
+                    <button onclick="document.getElementById('restore-file-input').click()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-2 rounded-lg flex items-center space-x-1.5 border border-slate-300">
+                        <i data-lucide="upload" class="w-4 h-4"></i>
+                        <span>Restaurar Copia</span>
+                    </button>
+                    <input type="file" id="restore-file-input" class="hidden" accept=".json" onchange="restoreBackup(event)">
+                    <button onclick="exportHistoryCSV()" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold px-3 py-2 rounded-lg flex items-center space-x-1.5 border border-emerald-200">
+                        <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                        <span>Excel / CSV</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-600">
+                        <thead class="bg-slate-50 border-b border-slate-200 text-slate-700 font-semibold uppercase tracking-wider">
+                            <tr>
+                                <th class="p-3">Fecha / Hora</th>
+                                <th class="p-3">Turno</th>
+                                <th class="p-3">Entrega</th>
+                                <th class="p-3">Recibe</th>
+                                <th class="p-3">Novedades Clínicas</th>
+                                <th class="p-3 text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-table-body" class="divide-y divide-slate-100">
+                            <!-- Filas dinámicas -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MODAL: REGISTRAR NOVEDAD CLINICA -->
+    <div id="add-note-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 z-50 hidden no-print">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 transform transition-all">
+            <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+                <h3 class="text-base font-bold text-slate-800 flex items-center space-x-2">
+                    <i data-lucide="user-plus" class="w-5 h-5 text-indigo-600"></i>
+                    <span>Registrar Novedad de Residente</span>
+                </h3>
+                <button onclick="closeAddNoteModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form id="note-form" onsubmit="saveNote(event)" class="space-y-4 mt-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Residente *</label>
+                    <select id="modal-resident" required class="w-full text-xs p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <!-- Opciones cargadas por JS -->
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Categoría de Novedad *</label>
+                    <select id="modal-category" required class="w-full text-xs p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <option value="Médica / Síntomas">Médica / Síntomas</option>
+                        <option value="Cambio Medicación">Cambio Medicación</option>
+                        <option value="Caída / Accidente">Caída / Evento</option>
+                        <option value="Conducta / Estado Ánimo">Conducta / Estado Ánimo</option>
+                        <option value="Nutrición / Digestión">Nutrición / Digestión</option>
+                        <option value="Rutina / General">Rutina / General</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Prioridad / Estado</label>
+                        <select id="modal-priority" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <option value="Normal">Normal</option>
+                            <option value="Atención Requerida">Atención Requerida</option>
+                            <option value="Urgente / Médico">Urgente / Médico</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Constantes Vitales (Opcional)</label>
+                        <input type="text" id="modal-vitals" placeholder="Ej: PA 120/80 - T 36.5°" class="w-full text-xs p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">Descripción Detallada *</label>
+                    <textarea id="modal-details" rows="3" required placeholder="Describe lo ocurrido, medidas tomadas y qué debe vigilar el turno entrante..." class="w-full text-xs p-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+                </div>
+
+                <div class="flex justify-end space-x-2 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="closeAddNoteModal()" class="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">Cancelar</button>
+                    <button type="submit" class="px-4 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow transition-colors">Guardar Novedad</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL CUSTOM NOTIFICACIONES -->
+    <div id="notification-toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3 transition-opacity duration-300 opacity-0 pointer-events-none z-50">
+        <i data-lucide="check-circle" class="w-5 h-5 text-emerald-400" id="toast-icon"></i>
+        <span id="toast-message" class="text-xs font-medium">Operación completada</span>
+    </div>
+
+    <!-- VISTA EXCLUSIVA PARA IMPRESIÓN -->
+    <div class="hidden print-only p-8">
+        <div class="text-center border-b pb-4 mb-4">
+            <h1 class="text-2xl font-bold">Residencia de Adulto Mayor "Saint Joseph"</h1>
+            <h2 class="text-lg font-semibold text-gray-700">INFORME OFICIAL DE ENTREGA DE TURNO</h2>
+            <p class="text-xs text-gray-500 mt-1">Fecha: <span id="print-date"></span> | Turno: <span id="print-shift"></span></p>
+        </div>
+
+        <div class="mb-6">
+            <h3 class="font-bold border-b text-sm mb-2">1. OBSERVACIONES GENERALES DE LA RESIDENCIA</h3>
+            <p class="text-xs text-gray-800" id="print-general-notes">Sin observaciones generales.</p>
+        </div>
+
+        <div class="mb-6">
+            <h3 class="font-bold border-b text-sm mb-2">2. REPORTE DE NOVEDADES POR RESIDENTE</h3>
+            <div id="print-resident-logs" class="space-y-3 text-xs">
+                <!-- Se llena al imprimir -->
+            </div>
+        </div>
+
+        <div class="mt-12 pt-8 border-t grid grid-cols-2 gap-8 text-center text-xs">
+            <div>
+                <p class="font-bold mb-8">____________________________________</p>
+                <p class="font-semibold" id="print-outgoing"></p>
+                <p class="text-gray-500">Firma Entregante (Turno Saliente)</p>
+            </div>
+            <div>
+                <p class="font-bold mb-8">____________________________________</p>
+                <p class="font-semibold" id="print-incoming"></p>
+                <p class="text-gray-500">Firma Receptor (Turno Entrante)</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DATOS INICIALES (MOCK STATE EN MEMORIA)
+        const residentsData = [
+            { id: 1, name: "Don Roberto Gómez", room: "Hab. 101", age: 82, dependence: "Severa", diagnosis: "Hipertensión, Alzheimer leve", status: "Estable" },
+            { id: 2, name: "Doña Elena Morales", room: "Hab. 102", age: 79, dependence: "Moderada", diagnosis: "Diabetes Tipo 2, Artrosis", status: "Observación" },
+            { id: 3, name: "Don Carmen Silva", room: "Hab. 103", age: 88, dependence: "Severa", diagnosis: "Secuela ACV, Parkinson", status: "Cuidados Especiales" },
+            { id: 4, name: "Doña María Teresa Ruiz", room: "Hab. 104", age: 75, dependence: "Leve", diagnosis: "Osteoporosis", status: "Estable" },
+            { id: 5, name: "Don Hugo Fernández", room: "Hab. 105", age: 84, dependence: "Moderada", diagnosis: "Insuficiencia Cardíaca", status: "Observación" }
+        ];
+
+        let currentShiftLogs = [
+            {
+                id: 101,
+                residentId: 2,
+                residentName: "Doña Elena Morales (Hab. 102)",
+                category: "Médica / Síntomas",
+                priority: "Atención Requerida",
+                vitals: "PA 145/90 - FC 82",
+                details: "Presentó cuadro febril leve (37.8°C) a las 14:30 hs. Se administró Paracetamol 500mg según indicación médica. Queda pendiente monitoreo de temperatura a las 18:00.",
+                time: "14:35"
+            },
+            {
+                id: 102,
+                residentId: 3,
+                residentName: "Don Carmen Silva (Hab. 103)",
+                category: "Cambio Medicación",
+                priority: "Normal",
+                vitals: "PA 120/75",
+                details: "Médico tratante ajustó dosis de Levodopa a 100mg cada 8 hrs a partir de la noche.",
+                time: "11:20"
+            }
+        ];
+
+        let historyShifts = [
+            {
+                id: "T-20261102-N",
+                date: "02/11/2026",
+                shift: "Noche (00:00 - 08:00)",
+                outgoing: "Enf. Mario López",
+                incoming: "Enf. Patricia R.",
+                notesCount: 2,
+                generalNotes: "Turno tranquilo sin eventualidades mayores en la madrugada."
+            }
+        ];
+
+        // INICIALIZACIÓN
+        window.onload = function() {
+            // Establecer fecha actual
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            document.getElementById('header-date').innerText = dateStr;
+            document.getElementById('print-date').innerText = dateStr;
+
+            renderShiftLogs();
+            renderResidents();
+            renderHistory();
+            populateResidentSelect();
+            updateStats();
+
+            // Inicializar Lucide Icons
+            lucide.createIcons();
+        };
+
+        // NAVEGACIÓN ENTRE PESTAÑAS
+        function switchTab(tab) {
+            const tabs = ['shift', 'residents', 'history'];
+            tabs.forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                document.getElementById(`tab-btn-${t}`).classList.remove('border-indigo-600', 'text-indigo-600');
+                document.getElementById(`tab-btn-${t}`).classList.add('border-transparent', 'text-slate-500');
+            });
+
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+            document.getElementById(`tab-btn-${tab}`).classList.add('border-indigo-600', 'text-indigo-600');
+            document.getElementById(`tab-btn-${tab}`).classList.remove('border-transparent', 'text-slate-500');
+        }
+
+        // RENDERIZAR LOGS DEL TURNO ACTUAL
+        function renderShiftLogs() {
+            const container = document.getElementById('current-shift-logs');
+            const printContainer = document.getElementById('print-resident-logs');
+            
+            if (currentShiftLogs.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 border-2 border-dashed border-slate-200 rounded-xl">
+                        <i data-lucide="clipboard-check" class="w-10 h-10 text-slate-300 mx-auto mb-2"></i>
+                        <p class="text-xs text-slate-500">No hay registros individuales cargados en este turno.</p>
+                    </div>
+                `;
+                printContainer.innerHTML = "<p>Sin novedades particulares registradas.</p>";
+                return;
+            }
+
+            container.innerHTML = currentShiftLogs.map(log => {
+                let badgeColor = "bg-blue-100 text-blue-700 border-blue-200";
+                if (log.priority === "Atención Requerida") badgeColor = "bg-amber-100 text-amber-700 border-amber-200";
+                if (log.priority === "Urgente / Médico") badgeColor = "bg-red-100 text-red-700 border-red-200";
+
+                return `
+                    <div class="p-3.5 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-200 transition">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                            <div class="flex items-center space-x-2">
+                                <span class="font-bold text-xs sm:text-sm text-slate-800">${log.residentName}</span>
+                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full border ${badgeColor}">${log.priority}</span>
+                            </div>
+                            <div class="flex items-center space-x-2 text-xs text-slate-400">
+                                <span class="bg-white px-2 py-0.5 rounded border border-slate-200 font-medium text-slate-600">${log.category}</span>
+                                <span><sup>⏱</sup> ${log.time} hs</span>
+                                <button onclick="deleteNote(${log.id})" class="text-red-400 hover:text-red-600 p-1 no-print">
+                                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed mb-1.5">${log.details}</p>
+                        ${log.vitals ? `<div class="text-[11px] text-indigo-700 font-medium bg-indigo-50/60 inline-block px-2 py-0.5 rounded"><b>Vitals:</b> ${log.vitals}</div>` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            // Preparar vista de impresión
+            printContainer.innerHTML = currentShiftLogs.map(log => `
+                <div class="border-b pb-2">
+                    <p class="font-bold">${log.residentName} - <span class="font-normal uppercase text-gray-500">[${log.category}]</span></p>
+                    <p class="mt-0.5">${log.details}</p>
+                    ${log.vitals ? `<p class="text-gray-600">Signos Vitales: ${log.vitals}</p>` : ''}
+                </div>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        // MODAL NOVEDADES
+        function openAddNoteModal() {
+            document.getElementById('add-note-modal').classList.remove('hidden');
+        }
+
+        function closeAddNoteModal() {
+            document.getElementById('add-note-modal').classList.add('hidden');
+            document.getElementById('note-form').reset();
+        }
+
+        function populateResidentSelect() {
+            const select = document.getElementById('modal-resident');
+            select.innerHTML = residentsData.map(r => `
+                <option value="${r.id}">${r.name} (${r.room})</option>
+            `).join('');
+        }
+
+        function saveNote(e) {
+            e.preventDefault();
+            const resId = parseInt(document.getElementById('modal-resident').value);
+            const resident = residentsData.find(r => r.id === resId);
+
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+
+            const newLog = {
+                id: Date.now(),
+                residentId: resId,
+                residentName: `${resident.name} (${resident.room})`,
+                category: document.getElementById('modal-category').value,
+                priority: document.getElementById('modal-priority').value,
+                vitals: document.getElementById('modal-vitals').value,
+                details: document.getElementById('modal-details').value,
+                time: `${hours}:${minutes}`
+            };
+
+            currentShiftLogs.unshift(newLog);
+            renderShiftLogs();
+            closeAddNoteModal();
+            updateStats();
+            showToast("Novedad registrada correctamente");
+        }
+
+        function deleteNote(id) {
+            currentShiftLogs = currentShiftLogs.filter(l => l.id !== id);
+            renderShiftLogs();
+            updateStats();
+            showToast("Registro eliminado");
+        }
+
+        // SECCIÓN RESIDENTES
+        function renderResidents() {
+            const grid = document.getElementById('residents-grid');
+            grid.innerHTML = residentsData.map(r => `
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-3">
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded">${r.room}</span>
+                                <h3 class="font-bold text-sm text-slate-800 mt-1">${r.name}</h3>
+                            </div>
+                            <span class="text-xs text-slate-400 font-medium">${r.age} años</span>
+                        </div>
+                        <div class="mt-3 space-y-1 text-xs">
+                            <p class="text-slate-500"><span class="font-semibold text-slate-700">Dependencia:</span> ${r.dependence}</p>
+                            <p class="text-slate-500"><span class="font-semibold text-slate-700">Diagnóstico:</span> ${r.diagnosis}</p>
+                        </div>
+                    </div>
+                    <div class="pt-2 border-t border-slate-100 flex justify-between items-center text-xs">
+                        <span class="text-slate-400">Estado general:</span>
+                        <span class="font-semibold px-2 py-0.5 rounded ${r.status === 'Estable' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}">${r.status}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterResidents() {
+            const query = document.getElementById('resident-search').value.toLowerCase();
+            const filtered = residentsData.filter(r => 
+                r.name.toLowerCase().includes(query) || 
+                r.room.toLowerCase().includes(query)
+            );
+
+            const grid = document.getElementById('residents-grid');
+            grid.innerHTML = filtered.map(r => `
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-3">
+                    <div>
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600 px-2 py-0.5 rounded">${r.room}</span>
+                                <h3 class="font-bold text-sm text-slate-800 mt-1">${r.name}</h3>
+                            </div>
+                            <span class="text-xs text-slate-400 font-medium">${r.age} años</span>
+                        </div>
+                        <div class="mt-3 space-y-1 text-xs">
+                            <p class="text-slate-500"><span class="font-semibold text-slate-700">Dependencia:</span> ${r.dependence}</p>
+                            <p class="text-slate-500"><span class="font-semibold text-slate-700">Diagnóstico:</span> ${r.diagnosis}</p>
+                        </div>
+                    </div>
+                    <div class="pt-2 border-t border-slate-100 flex justify-between items-center text-xs">
+                        <span class="text-slate-400">Estado general:</span>
+                        <span class="font-semibold px-2 py-0.5 rounded ${r.status === 'Estable' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}">${r.status}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // SECCIÓN HISTÓRICO
+        function renderHistory() {
+            const tbody = document.getElementById('history-table-body');
+            if (historyShifts.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">No hay turnos históricos archivados.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = historyShifts.map(h => `
+                <tr class="hover:bg-slate-50">
+                    <td class="p-3 font-medium text-slate-800">${h.date}</td>
+                    <td class="p-3">${h.shift}</td>
+                    <td class="p-3">${h.outgoing}</td>
+                    <td class="p-3">${h.incoming}</td>
+                    <td class="p-3 font-semibold text-indigo-600">${h.notesCount} novedades</td>
+                    <td class="p-3 text-center">
+                        <button onclick="viewHistoryDetail('${h.id}')" class="text-slate-500 hover:text-indigo-600 p-1">
+                            <i data-lucide="eye" class="w-4 h-4"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        // GUARDAR Y FINALIZAR TURNO
+        function saveAndFinalizeShift() {
+            const outgoing = document.getElementById('outgoing-staff').value;
+            const incoming = document.getElementById('incoming-staff').value;
+            const generalNotes = document.getElementById('general-notes').value;
+            const shiftType = document.getElementById('shift-type').value;
+
+            if (!incoming.trim()) {
+                showToast("Ingresa el nombre del personal que recibe el turno", "error");
+                return;
+            }
+
+            // Preparar datos para imprimir antes de resetear
+            document.getElementById('print-shift').innerText = shiftType;
+            document.getElementById('print-general-notes').innerText = generalNotes || "Sin observaciones generales.";
+            document.getElementById('print-outgoing').innerText = outgoing;
+            document.getElementById('print-incoming').innerText = incoming;
+
+            // Guardar en histórico
+            const today = new Date();
+            const dateStr = today.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+            const newHistoryItem = {
+                id: `T-${Date.now()}`,
+                date: dateStr,
+                shift: shiftType,
+                outgoing: outgoing,
+                incoming: incoming,
+                notesCount: currentShiftLogs.length,
+                generalNotes: generalNotes
+            };
+
+            historyShifts.unshift(newHistoryItem);
+            renderHistory();
+
+            showToast("Turno finalizado y guardado con éxito");
+
+            // Resetear para siguiente turno
+            currentShiftLogs = [];
+            document.getElementById('general-notes').value = "";
+            document.getElementById('incoming-staff').value = "";
+            document.querySelectorAll('.checklist-item').forEach(cb => cb.checked = false);
+            renderShiftLogs();
+            updateStats();
+        }
+
+        // ESTADÍSTICAS RÁPIDAS
+        function updateStats() {
+            document.getElementById('stat-total').innerText = residentsData.length;
+            document.getElementById('stat-alerts').innerText = currentShiftLogs.length;
+            
+            const obsCount = residentsData.filter(r => r.status === 'Observación').length;
+            document.getElementById('stat-obs').innerText = obsCount;
+
+            const medsCount = currentShiftLogs.filter(l => l.category === 'Cambio Medicación').length;
+            document.getElementById('stat-meds').innerText = medsCount;
+        }
+
+        // TOAST CUSTOM
+        function showToast(msg, type = "success") {
+            const toast = document.getElementById('notification-toast');
+            const message = document.getElementById('toast-message');
+            const icon = document.getElementById('toast-icon');
+
+            message.innerText = msg;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            toast.classList.add('opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 3000);
+        }
+
+        // EXPORTACIÓN A CSV
+        function exportHistoryCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,Fecha,Turno,Entrega,Recibe,Cantidad Novedades\n";
+            historyShifts.forEach(h => {
+                csvContent += `"${h.date}","${h.shift}","${h.outgoing}","${h.incoming}",${h.notesCount}\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `historico_turnos_residencia.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // RESPALDO COMPLETO EN JSON (GUARDA RESIDENTES E HISTORIAL)
+        function exportFullBackup() {
+            const backupData = {
+                version: "1.0",
+                exportDate: new Date().toISOString(),
+                residents: residentsData,
+                history: historyShifts
+            };
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `RESPALDO_RESIDENCIA_${new Date().toISOString().slice(0,10)}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+
+            showToast("Respaldo descargado correctamente");
+        }
+
+        // RESTAURAR COPIA DE SEGURIDAD DESDE ARCHIVO
+        function restoreBackup(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.history) {
+                        historyShifts = data.history;
+                        renderHistory();
+                        showToast("Histórico restaurado con éxito");
+                    } else {
+                        showToast("El archivo no tiene el formato correcto", "error");
+                    }
+                } catch (err) {
+                    showToast("Error al leer el archivo de respaldo", "error");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function viewHistoryDetail(id) {
+            const item = historyShifts.find(h => h.id === id);
+            if (item) {
+                showToast(`Turno ${item.date} (${item.shift}): ${item.notesCount} novedades.`);
+            }
+        }
+    </script>
+</body>
+</html>
