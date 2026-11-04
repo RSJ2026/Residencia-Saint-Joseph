@@ -3,347 +3,380 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Entrega de Turno - Residencia Saint Joseph</title>
+  <title>Residencia Saint Joseph - Control de Turnos y Residentes</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+  </style>
 </head>
-<body class="bg-slate-50 font-sans min-h-screen text-slate-800 pb-12">
+<body class="bg-slate-50 font-sans min-h-screen text-slate-800 flex flex-col justify-between">
 
-  <!-- ENCABEZADO Y LOGO -->
-  <header class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-30">
-    <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-center justify-between gap-4">
+  <!-- ENCABEZADO SUPERIOR -->
+  <header class="bg-indigo-900 text-white shadow-md sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col lg:flex-row items-center justify-between gap-4">
       
-      <!-- LOGO RESIDENCIA SAINT JOSEPH -->
-      <div class="flex items-center gap-3">
-        <img src="logo.jpg" alt="Logo Residencia Saint Joseph" class="h-16 w-auto object-contain bg-white rounded-lg p-1" onerror="this.style.display='none'; document.getElementById('svg-fallback').style.display='flex';">
-        
-        <!-- Fallback SVG en caso de no encontrar la imagen logo.jpg -->
-        <div id="svg-fallback" class="hidden items-center gap-2">
-          <svg class="w-12 h-12 text-slate-800" viewBox="0 0 100 100" fill="currentColor">
-            <path d="M50 35 C40 20 20 25 20 42 C20 60 45 78 50 82 C55 78 80 60 80 42 C80 25 60 20 50 35 Z" fill="#1e293b"/>
-          </svg>
-        </div>
-
-        <div>
-          <h1 class="text-xl font-bold tracking-tight text-slate-900">Saint JOSEPH</h1>
-          <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">Residencia Adulto Mayor</p>
+      <!-- LOGO Y TÍTULO SOLICITADO -->
+      <div class="flex items-center gap-3 w-full lg:w-auto justify-between lg:justify-start">
+        <div class="flex items-center gap-3">
+          <div class="bg-white p-2 rounded-xl text-indigo-900 shadow-sm flex items-center justify-center w-12 h-12 font-bold text-xl">
+            <i class="fa-solid fa-house-medical"></i>
+          </div>
+          <div>
+            <h1 class="text-xl md:text-2xl font-bold tracking-wide leading-tight">Residencia Saint Joseph</h1>
+            <p class="text-xs text-indigo-200 uppercase tracking-widest font-semibold">Sistema de Gestión e Histórico de Turnos</p>
+          </div>
         </div>
       </div>
 
-      <!-- SELECCIÓN DE JEFE DE TURNO, FECHA Y HORARIO -->
-      <div class="flex flex-wrap items-center gap-3 bg-slate-100 p-2 rounded-xl border border-slate-200 text-sm">
-        <div>
-          <label class="block text-xs text-slate-500 font-semibold">Jefe de Turno:</label>
-          <select id="currentSupervisorSelect" onchange="changeSupervisor(this.value)" class="bg-white border border-slate-300 rounded-md px-2 py-1 font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
-            <!-- Cargado dinámicamente -->
+      <!-- PANEL DERECHO: JEFE DE TURNO, CALENDARIO Y HORARIO -->
+      <div class="w-full lg:w-auto flex flex-wrap items-center gap-3 bg-indigo-950/70 p-3 rounded-xl border border-indigo-700/60 text-xs">
+        
+        <!-- JEFES DE TURNO (EXCLUSIVOS) -->
+        <div class="flex-1 min-w-[160px]">
+          <label class="block text-indigo-300 font-semibold mb-1 flex items-center gap-1">
+            <i class="fa-solid fa-user-shield"></i> Jefe de Turno:
+          </label>
+          <select id="headerSupervisor" onchange="saveHeaderState()" class="w-full bg-slate-800 border border-indigo-600 rounded-lg px-2.5 py-1.5 font-semibold text-white focus:outline-none focus:ring-2 focus:ring-sky-400">
+            <option value="Antonio González">Antonio González</option>
+            <option value="Jennifer Soto">Jennifer Soto</option>
+            <option value="Katerin Sobarzo">Katerin Sobarzo</option>
           </select>
         </div>
-        <div>
-          <label class="block text-xs text-slate-500 font-semibold">Fecha del Turno:</label>
-          <input type="date" id="shiftDateInput" class="bg-white border border-slate-300 rounded-md px-2 py-1 font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
+
+        <!-- FECHA / CALENDARIO -->
+        <div class="flex-1 min-w-[140px]">
+          <label class="block text-indigo-300 font-semibold mb-1 flex items-center gap-1">
+            <i class="fa-solid fa-calendar-days"></i> Fecha del Turno:
+          </label>
+          <input type="date" id="headerDate" onchange="saveHeaderState()" class="w-full bg-slate-800 border border-indigo-600 rounded-lg px-2.5 py-1.5 font-semibold text-white focus:outline-none focus:ring-2 focus:ring-sky-400">
         </div>
-        <div>
-          <label class="block text-xs text-slate-500 font-semibold">Horario:</label>
-          <select id="shiftTypeSelect" class="bg-white border border-slate-300 rounded-md px-2 py-1 font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500">
-            <!-- Cargado dinámicamente -->
+
+        <!-- HORARIOS SOLICITADOS -->
+        <div class="flex-1 min-w-[210px]">
+          <label class="block text-indigo-300 font-semibold mb-1 flex items-center gap-1">
+            <i class="fa-solid fa-clock"></i> Horario:
+          </label>
+          <select id="headerSchedule" onchange="saveHeaderState()" class="w-full bg-slate-800 border border-indigo-600 rounded-lg px-2.5 py-1.5 font-semibold text-white focus:outline-none focus:ring-2 focus:ring-sky-400">
+            <option value="Día: 08:00 hrs. - 20:00 hrs.">Día: 08:00 hrs. - 20:00 hrs.</option>
+            <option value="Noche: 20:00 hrs. - 08:00 hrs.">Noche: 20:00 hrs. - 08:00 hrs.</option>
           </select>
         </div>
+
       </div>
 
     </div>
   </header>
 
-  <!-- NAVEGACIÓN PRINCIPAL -->
-  <main class="max-w-6xl mx-auto px-4 mt-6">
+  <!-- CONTENIDO PRINCIPAL Y PESTAÑAS -->
+  <main class="max-w-7xl mx-auto px-4 mt-6 mb-12 flex-grow w-full">
+    
+    <!-- PESTAÑAS DE NAVEGACIÓN -->
     <nav class="flex border-b border-slate-200 mb-6 gap-2 overflow-x-auto pb-1">
-      <button onclick="switchTab('tab-entrega')" id="btn-tab-entrega" class="tab-btn px-4 py-2 font-bold text-sm rounded-t-lg bg-sky-600 text-white border-b-2 border-sky-600 transition">
-        📝 Entrega de Turno
+      <button onclick="switchTab('tab-entrega')" id="btn-tab-entrega" class="tab-btn px-5 py-2.5 font-bold text-sm rounded-t-xl transition-all duration-200 bg-sky-600 text-white shadow-sm flex items-center gap-2">
+        <i class="fa-solid fa-notes-medical"></i> Entrega de Turno por Residente
       </button>
-      <button onclick="switchTab('tab-residentes')" id="btn-tab-residentes" class="tab-btn px-4 py-2 font-bold text-sm rounded-t-lg bg-white text-slate-600 hover:bg-slate-100 border-b-2 border-transparent transition">
-        👴 Ficha de Residentes
+      <button onclick="switchTab('tab-residentes')" id="btn-tab-residentes" class="tab-btn px-5 py-2.5 font-bold text-sm rounded-t-xl transition-all duration-200 bg-white text-slate-600 hover:bg-slate-100 flex items-center gap-2">
+        <i class="fa-solid fa-hospital-user"></i> Registro y Ficha de Residentes
       </button>
-      <button onclick="switchTab('tab-historico')" id="btn-tab-historico" class="tab-btn px-4 py-2 font-bold text-sm rounded-t-lg bg-white text-slate-600 hover:bg-slate-100 border-b-2 border-transparent transition">
-        📚 Histórico de Entregas
-      </button>
-      <button onclick="switchTab('tab-config')" id="btn-tab-config" class="tab-btn px-4 py-2 font-bold text-sm rounded-t-lg bg-white text-slate-600 hover:bg-slate-100 border-b-2 border-transparent transition">
-        ⚙️ Configurar Turnos y Perfiles
+      <button onclick="switchTab('tab-historico')" id="btn-tab-historico" class="tab-btn px-5 py-2.5 font-bold text-sm rounded-t-xl transition-all duration-200 bg-white text-slate-600 hover:bg-slate-100 flex items-center gap-2">
+        <i class="fa-solid fa-book-medical"></i> Histórico de Entregas
       </button>
     </nav>
 
-    <!-- PESTAÑA 1: ENTREGA DE TURNO -->
-    <section id="tab-entrega" class="tab-content">
+    <!-- NOTIFICACIONES FLASH -->
+    <div id="alertBox" class="hidden mb-6 p-4 rounded-xl border flex items-center justify-between shadow-sm">
+      <div class="flex items-center gap-3">
+        <i id="alertIcon" class="fa-solid text-lg"></i>
+        <span id="alertMessage" class="text-sm font-semibold"></span>
+      </div>
+      <button onclick="closeAlert()" class="text-slate-400 hover:text-slate-600 p-1">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <!-- ==================== PESTAÑA 1: ENTREGA DE TURNO POR RESIDENTE ==================== -->
+    <section id="tab-entrega" class="tab-content space-y-6">
       
-      <!-- CHECKLIST DE VERIFICACIÓN -->
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-6">
-        <h3 class="text-base font-bold text-slate-800 mb-3 flex items-center gap-2">
-          ☑️ Checklist de Verificación de Turno
+      <!-- ENCABEZADO DE SECCIÓN -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-clipboard-check text-sky-600"></i> Registro de Novedades y Estado por Residente
+            </h3>
+            <p class="text-xs text-slate-500 mt-0.5">Complete la información observada durante el turno actual para cada uno de los residentes activos.</p>
+          </div>
+          <div class="bg-sky-50 border border-sky-200 rounded-xl px-4 py-2 text-xs text-sky-900">
+            <span class="font-bold">Total Residentes Activos:</span> <span id="activeResidentCount">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOVEDADES GENERALES DE LA RESIDENCIA -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <h3 class="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-bullhorn text-sky-600"></i> Novedades Generales de la Residencia
         </h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-100">
-            <input type="checkbox" id="chk1" class="w-5 h-5 text-sky-600 rounded">
-            <span class="text-sm font-medium text-slate-700">Entrega de canastos con insumos personales</span>
-          </label>
-          <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-100">
-            <input type="checkbox" id="chk2" class="w-5 h-5 text-sky-600 rounded">
-            <span class="text-sm font-medium text-slate-700">Higiene, cambios de pañal y posturales completados</span>
-          </label>
-          <label class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200 cursor-pointer hover:bg-slate-100">
-            <input type="checkbox" id="chk3" class="w-5 h-5 text-sky-600 rounded">
-            <span class="text-sm font-medium text-slate-700">Hidratación diaria</span>
-          </label>
+        <p class="text-xs text-slate-500 mb-3">Observaciones globales del turno (mantenimiento, visitas institucionales, entregas generales de insumos, etc.):</p>
+        <textarea id="generalNotes" rows="3" placeholder="Escriba aquí los avisos generales del turno..." class="w-full border border-slate-300 rounded-xl p-3.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none bg-slate-50/50"></textarea>
+      </div>
+
+      <!-- CONTENEDOR DE TARJETAS POR RESIDENTE -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-user-doctor text-sky-600"></i> Ficha individual de Entrega de Turno
+        </h3>
+        <div id="residentShiftCards" class="space-y-6">
+          <!-- Carga dinámica -->
         </div>
       </div>
 
-      <!-- NOVEDADES GENERALES -->
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-6">
-        <h3 class="text-base font-bold text-slate-800 mb-2">📢 Novedades Generales de la Residencia</h3>
-        <textarea id="generalNotes" rows="3" placeholder="Escriba avisos generales, visitas médicas, entregas de insumos o novedades del turno..." class="w-full border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none"></textarea>
-      </div>
-
-      <!-- OBSERVACIONES POR RESIDENTE -->
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-6">
-        <h3 class="text-base font-bold text-slate-800 mb-4">🩺 Observaciones por Residente</h3>
-        <div id="residentShiftCards" class="space-y-4">
-          <!-- Cargado dinámicamente -->
-        </div>
-      </div>
-
-      <!-- BOTONES DE ACCIÓN -->
-      <div class="flex flex-wrap gap-3 justify-end">
-        <button onclick="saveShiftLog()" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-6 py-3 rounded-xl shadow transition flex items-center gap-2">
-          💾 Finalizar y Registrar Entrega de Turno
+      <!-- BOTÓN REGISTRAR ENTREGA -->
+      <div class="flex items-center justify-end gap-3 pt-2">
+        <button onclick="resetShiftForm()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold px-5 py-3 rounded-xl transition text-sm">
+          Limpiar Campos
+        </button>
+        <button onclick="saveShiftLog()" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-7 py-3 rounded-xl shadow-md transition text-sm flex items-center gap-2">
+          <i class="fa-solid fa-floppy-disk"></i> Guardar Registro de Entrega de Turno
         </button>
       </div>
+
     </section>
 
-    <!-- PESTAÑA 2: FICHA DE RESIDENTES -->
-    <section id="tab-residentes" class="tab-content hidden">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-6">
-        <h3 class="text-base font-bold text-slate-800 mb-4">➕ Registrar Nuevo Residente</h3>
+    <!-- ==================== PESTAÑA 2: REGISTRO Y FICHA DE RESIDENTES ==================== -->
+    <section id="tab-residentes" class="tab-content hidden space-y-6">
+      
+      <!-- FORMULARIO DE INGRESO / EDICIÓN -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <h3 class="text-base font-bold text-slate-900 mb-1 flex items-center gap-2">
+          <i class="fa-solid fa-user-plus text-sky-600"></i> Formulario de Registro de Residentes
+        </h3>
+        <p class="text-xs text-slate-500 mb-5">Ingrese o actualice la ficha completa del adulto mayor en la residencia.</p>
+
         <form id="residentForm" onsubmit="saveResident(event)" class="space-y-4">
           <input type="hidden" id="editResidentId">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            
+            <!-- Nombre Completo -->
+            <div class="lg:col-span-2">
+              <label class="block text-xs font-bold text-slate-700 mb-1">Nombre Completo *</label>
+              <input type="text" id="resName" required placeholder="Ej. Ana María Silva Pérez" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+            </div>
+
+            <!-- RUT -->
             <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Nombre Completo del Residente *</label>
-              <input type="text" id="resName" required placeholder="Ej. María González" class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+              <label class="block text-xs font-bold text-slate-700 mb-1">RUT *</label>
+              <input type="text" id="resRut" required placeholder="12.345.678-9" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
             </div>
+
+            <!-- Fecha de Nacimiento -->
             <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Habitación / Cama</label>
-              <input type="text" id="resRoom" placeholder="Ej. Habitación 102 - Cama A" class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+              <label class="block text-xs font-bold text-slate-700 mb-1">Fecha de Nacimiento *</label>
+              <input type="date" id="resBirthDate" required onchange="calculateAgeFromInput()" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
             </div>
-            <div class="md:col-span-2">
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Antecedentes Médicos / Cuidados Especiales</label>
-              <textarea id="resNotes" rows="2" placeholder="Diagnósticos, alergias, régimen alimentario, tratamiento especial..." class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none"></textarea>
+
+            <!-- Edad -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Edad (Años) *</label>
+              <input type="number" id="resAge" min="0" max="130" required placeholder="Ej. 82" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
             </div>
+
+            <!-- Discapacidad -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Grado de Discapacidad *</label>
+              <select id="resDisability" required class="w-full border border-slate-300 rounded-xl p-2.5 text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-sky-500 focus:outline-none">
+                <option value="Leve">Leve</option>
+                <option value="Moderada">Moderada</option>
+                <option value="Grave">Grave</option>
+              </select>
+            </div>
+
+            <!-- Enfermedades -->
+            <div class="lg:col-span-2">
+              <label class="block text-xs font-bold text-slate-700 mb-1">Enfermedades / Diagnósticos</label>
+              <input type="text" id="resDiseases" placeholder="Ej. Hipertensión, Diabetes Tipo 2, Artrosis" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+            </div>
+
+            <!-- Medicamentos -->
+            <div class="lg:col-span-4">
+              <label class="block text-xs font-bold text-slate-700 mb-1">Medicamentos y Horarios</label>
+              <textarea id="resMeds" rows="2" placeholder="Ej. Losartán 50mg (08:00 hrs), Metformina 850mg (12:00 - 20:00 hrs)" class="w-full border border-slate-300 rounded-xl p-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none"></textarea>
+            </div>
+
           </div>
-          <div class="flex justify-end gap-2">
-            <button type="button" onclick="resetResidentForm()" class="px-4 py-2 text-sm bg-slate-100 text-slate-600 font-semibold rounded-lg hover:bg-slate-200">Limpiar</button>
-            <button type="submit" class="px-5 py-2 text-sm bg-sky-600 text-white font-bold rounded-lg hover:bg-sky-700 shadow">Guardar Residente</button>
+
+          <div class="flex justify-end gap-3 pt-2">
+            <button type="button" onclick="resetResidentForm()" class="px-5 py-2.5 text-sm bg-slate-100 text-slate-700 font-semibold rounded-xl hover:bg-slate-200 transition">
+              Limpiar Formulario
+            </button>
+            <button type="submit" class="px-6 py-2.5 text-sm bg-sky-600 text-white font-bold rounded-xl hover:bg-sky-700 shadow-md transition flex items-center gap-2">
+              <i class="fa-solid fa-address-card"></i> Guardar Ficha del Residente
+            </button>
           </div>
         </form>
       </div>
 
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-        <h3 class="text-base font-bold text-slate-800 mb-4">📋 Lista de Residentes Activos</h3>
+      <!-- LISTADO DE RESIDENTES -->
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <h3 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <i class="fa-solid fa-users text-sky-600"></i> Lista de Residentes Registrados
+        </h3>
         <div id="residentsList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- Cargado dinámicamente -->
+          <!-- Carga dinámica -->
         </div>
       </div>
+
     </section>
 
-    <!-- PESTAÑA 3: HISTÓRICO DE ENTREGAS -->
-    <section id="tab-historico" class="tab-content hidden">
-      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-6 flex flex-wrap items-center justify-between gap-4">
-        <h3 class="text-base font-bold text-slate-800">📚 Histórico de Registros de Turno</h3>
-        <button onclick="clearHistory()" class="text-xs bg-rose-50 text-rose-600 border border-rose-200 px-3 py-1.5 rounded-lg hover:bg-rose-100 font-semibold">Vaciar Histórico</button>
-      </div>
-      <div id="historyList" class="space-y-4">
-        <!-- Cargado dinámicamente -->
-      </div>
-    </section>
-
-    <!-- PESTAÑA 4: CONFIGURAR TURNOS Y PERFILES -->
-    <section id="tab-config" class="tab-content hidden">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <!-- ==================== PESTAÑA 3: HISTÓRICO DE ENTREGAS ==================== -->
+    <section id="tab-historico" class="tab-content hidden space-y-6">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
         
-        <!-- JEFES DE TURNO -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-          <h3 class="text-base font-bold text-slate-800 mb-4">👤 Jefes de Turno</h3>
-          <form onsubmit="addSupervisor(event)" class="flex gap-2 mb-4">
-            <input type="text" id="newSupervisorInput" required placeholder="Nombre del Jefe de Turno" class="flex-1 border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
-            <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-4 py-2 rounded-lg text-sm">Agregar</button>
-          </form>
-          <ul id="supervisorsList" class="divide-y divide-slate-100">
-            <!-- Cargado dinámicamente -->
-          </ul>
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-200">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-box-archive text-sky-600"></i> Histórico de Registros de Turno
+            </h3>
+            <p class="text-xs text-slate-500">Historial de entregas de turno guardadas cronológicamente.</p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="relative flex-1 sm:w-64">
+              <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-sm"></i>
+              <input type="text" id="searchInput" onkeyup="renderHistory()" placeholder="Buscar en observaciones..." class="w-full pl-9 pr-3 py-1.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
+            </div>
+            <button onclick="clearHistory()" class="text-xs bg-rose-50 text-rose-600 border border-rose-200 px-3 py-2 rounded-lg hover:bg-rose-100 font-semibold transition">
+              <i class="fa-solid fa-trash-can mr-1"></i> Borrar Historial
+            </button>
+          </div>
         </div>
 
-        <!-- HORARIOS Y TIPOS DE TURNO -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-          <h3 class="text-base font-bold text-slate-800 mb-4">⏰ Horarios de Turnos</h3>
-          <form onsubmit="addShiftType(event)" class="flex gap-2 mb-4">
-            <input type="text" id="newShiftTypeInput" required placeholder="Ej. Día (08:00 - 20:00)" class="flex-1 border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none">
-            <button type="submit" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-4 py-2 rounded-lg text-sm">Agregar</button>
-          </form>
-          <ul id="shiftTypesList" class="divide-y divide-slate-100">
-            <!-- Cargado dinámicamente -->
-          </ul>
+        <div id="historyList" class="space-y-6">
+          <!-- Carga dinámica -->
         </div>
 
       </div>
     </section>
+
   </main>
 
-  <!-- LÓGICA JAVASCRIPT Y PERSISTENCIA DE DATOS -->
+  <!-- PIE DE PÁGINA -->
+  <footer class="bg-slate-900 text-slate-400 py-4 border-t border-slate-800 text-center text-xs">
+    <div class="max-w-7xl mx-auto px-4">
+      Residencia Saint Joseph &copy; <span id="currentYear"></span> - Plataforma de Control e Histórico de Turnos
+    </div>
+  </footer>
+
+  <!-- SCRIPT DE LOGICA GENERAL -->
   <script>
-    // ESTADO INICIAL Y PERSISTENCIA (LOCALSTORAGE)
+    // DATOS DE ALMACENAMIENTO (localStorage)
     let appState = {
-      supervisors: JSON.parse(localStorage.getItem('rsj_supervisors')) || ["Antonio González", "Evelyn Rojas"],
-      shiftTypes: JSON.parse(localStorage.getItem('rsj_shiftTypes')) || ["Largo Día (08:00 - 20:00)", "Noche (20:00 - 08:00)", "Mañana (08:00 - 16:00)", "Tarde (12:00 - 20:00)"],
-      residents: JSON.parse(localStorage.getItem('rsj_residents')) || [],
-      history: JSON.parse(localStorage.getItem('rsj_history')) || [],
-      currentSupervisor: localStorage.getItem('rsj_currentSupervisor') || "Antonio González"
+      residents: JSON.parse(localStorage.getItem('rsj_residents_v2')) || [],
+      history: JSON.parse(localStorage.getItem('rsj_history_v2')) || [],
+      header: JSON.parse(localStorage.getItem('rsj_header_v2')) || {
+        supervisor: "Antonio González",
+        date: new Date().toISOString().split('T')[0],
+        schedule: "Día: 08:00 hrs. - 20:00 hrs."
+      }
     };
 
     // AL CARGAR LA PÁGINA
     window.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('shiftDateInput').valueAsDate = new Date();
-      renderSupervisors();
-      renderShiftTypes();
+      document.getElementById('currentYear').innerText = new Date().getFullYear();
+
+      // Cargar estado de cabecera
+      document.getElementById('headerSupervisor').value = appState.header.supervisor;
+      document.getElementById('headerDate').value = appState.header.date || new Date().toISOString().split('T')[0];
+      document.getElementById('headerSchedule').value = appState.header.schedule;
+
       renderResidents();
-      renderHistory();
       renderShiftCards();
+      renderHistory();
     });
 
-    // CAMBIO DE PESTAÑAS
+    // GUARDAR CABECERA
+    function saveHeaderState() {
+      appState.header = {
+        supervisor: document.getElementById('headerSupervisor').value,
+        date: document.getElementById('headerDate').value,
+        schedule: document.getElementById('headerSchedule').value
+      };
+      localStorage.setItem('rsj_header_v2', JSON.stringify(appState.header));
+    }
+
+    // PESTAÑAS
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('bg-sky-600', 'text-white', 'border-sky-600');
-        btn.classList.add('bg-white', 'text-slate-600', 'border-transparent');
+        btn.classList.remove('bg-sky-600', 'text-white', 'shadow-sm');
+        btn.classList.add('bg-white', 'text-slate-600');
       });
 
       document.getElementById(tabId).classList.remove('hidden');
-      const activeBtn = document.getElementById('btn-' + tabId);
-      activeBtn.classList.remove('bg-white', 'text-slate-600', 'border-transparent');
-      activeBtn.classList.add('bg-sky-600', 'text-white', 'border-sky-600');
+      const activeBtn = document.getElementById(`btn-${tabId}`);
+      activeBtn.classList.remove('bg-white', 'text-slate-600');
+      activeBtn.classList.add('bg-sky-600', 'text-white', 'shadow-sm');
     }
 
-    // JEFES DE TURNO
-    function renderSupervisors() {
-      const select = document.getElementById('currentSupervisorSelect');
-      const list = document.getElementById('supervisorsList');
-      select.innerHTML = '';
-      list.innerHTML = '';
-
-      appState.supervisors.forEach((sup, idx) => {
-        // Opción en Select
-        const option = document.createElement('option');
-        option.value = sup;
-        option.textContent = sup;
-        if (sup === appState.currentSupervisor) option.selected = true;
-        select.appendChild(option);
-
-        // Ítem en Configuración
-        const li = document.createElement('li');
-        li.className = "py-2 flex justify-between items-center text-sm text-slate-700";
-        li.innerHTML = `
-          <span>${sup}</span>
-          <button onclick="deleteSupervisor(${idx})" class="text-rose-500 hover:text-rose-700 font-semibold text-xs">Eliminar</button>
-        `;
-        list.appendChild(li);
-      });
-    }
-
-    function changeSupervisor(val) {
-      appState.currentSupervisor = val;
-      localStorage.setItem('rsj_currentSupervisor', val);
-    }
-
-    function addSupervisor(e) {
-      e.preventDefault();
-      const input = document.getElementById('newSupervisorInput');
-      const val = input.value.trim();
-      if (val && !appState.supervisors.includes(val)) {
-        appState.supervisors.push(val);
-        localStorage.setItem('rsj_supervisors', JSON.stringify(appState.supervisors));
-        input.value = '';
-        renderSupervisors();
+    // CÁLCULO DE EDAD MEDIANTE CALENDARIO DE NACIMIENTO
+    function calculateAgeFromInput() {
+      const birthInput = document.getElementById('resBirthDate').value;
+      if (birthInput) {
+        const birthDate = new Date(birthInput);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+          age--;
+        }
+        if (age >= 0) {
+          document.getElementById('resAge').value = age;
+        }
       }
     }
 
-    function deleteSupervisor(idx) {
-      appState.supervisors.splice(idx, 1);
-      localStorage.setItem('rsj_supervisors', JSON.stringify(appState.supervisors));
-      if (appState.supervisors.length > 0) appState.currentSupervisor = appState.supervisors[0];
-      renderSupervisors();
-    }
-
-    // HORARIOS
-    function renderShiftTypes() {
-      const select = document.getElementById('shiftTypeSelect');
-      const list = document.getElementById('shiftTypesList');
-      select.innerHTML = '';
-      list.innerHTML = '';
-
-      appState.shiftTypes.forEach((st, idx) => {
-        const option = document.createElement('option');
-        option.value = st;
-        option.textContent = st;
-        select.appendChild(option);
-
-        const li = document.createElement('li');
-        li.className = "py-2 flex justify-between items-center text-sm text-slate-700";
-        li.innerHTML = `
-          <span>${st}</span>
-          <button onclick="deleteShiftType(${idx})" class="text-rose-500 hover:text-rose-700 font-semibold text-xs">Eliminar</button>
-        `;
-        list.appendChild(li);
-      });
-    }
-
-    function addShiftType(e) {
-      e.preventDefault();
-      const input = document.getElementById('newShiftTypeInput');
-      const val = input.value.trim();
-      if (val && !appState.shiftTypes.includes(val)) {
-        appState.shiftTypes.push(val);
-        localStorage.setItem('rsj_shiftTypes', JSON.stringify(appState.shiftTypes));
-        input.value = '';
-        renderShiftTypes();
-      }
-    }
-
-    function deleteShiftType(idx) {
-      appState.shiftTypes.splice(idx, 1);
-      localStorage.setItem('rsj_shiftTypes', JSON.stringify(appState.shiftTypes));
-      renderShiftTypes();
-    }
-
-    // GESTIÓN DE RESIDENTES
+    // REGISTRAR / EDITAR RESIDENTE
     function saveResident(e) {
       e.preventDefault();
       const id = document.getElementById('editResidentId').value;
       const name = document.getElementById('resName').value.trim();
-      const room = document.getElementById('resRoom').value.trim();
-      const notes = document.getElementById('resNotes').value.trim();
+      const rut = document.getElementById('resRut').value.trim();
+      const birthDate = document.getElementById('resBirthDate').value;
+      const age = document.getElementById('resAge').value;
+      const disability = document.getElementById('resDisability').value;
+      const diseases = document.getElementById('resDiseases').value.trim();
+      const meds = document.getElementById('resMeds').value.trim();
 
       if (id) {
         const res = appState.residents.find(r => r.id === id);
         if (res) {
           res.name = name;
-          res.room = room;
-          res.notes = notes;
+          res.rut = rut;
+          res.birthDate = birthDate;
+          res.age = age;
+          res.disability = disability;
+          res.diseases = diseases;
+          res.meds = meds;
         }
+        showAlert('Ficha de residente actualizada correctamente.', 'success');
       } else {
         appState.residents.push({
           id: Date.now().toString(),
           name,
-          room,
-          notes
+          rut,
+          birthDate,
+          age,
+          disability,
+          diseases,
+          meds
         });
+        showAlert('Residente registrado exitosamente.', 'success');
       }
 
-      localStorage.setItem('rsj_residents', JSON.stringify(appState.residents));
+      localStorage.setItem('rsj_residents_v2', JSON.stringify(appState.residents));
       resetResidentForm();
       renderResidents();
       renderShiftCards();
@@ -359,40 +392,295 @@
       if (res) {
         document.getElementById('editResidentId').value = res.id;
         document.getElementById('resName').value = res.name;
-        document.getElementById('resRoom').value = res.room || '';
-        document.getElementById('resNotes').value = res.notes || '';
+        document.getElementById('resRut').value = res.rut || '';
+        document.getElementById('resBirthDate').value = res.birthDate || '';
+        document.getElementById('resAge').value = res.age || '';
+        document.getElementById('resDisability').value = res.disability || 'Leve';
+        document.getElementById('resDiseases').value = res.diseases || '';
+        document.getElementById('resMeds').value = res.meds || '';
+        switchTab('tab-residentes');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
 
     function deleteResident(id) {
-      if (confirm('¿Está seguro de eliminar este residente?')) {
+      if (confirm('¿Está seguro de eliminar a este residente del sistema?')) {
         appState.residents = appState.residents.filter(r => r.id !== id);
-        localStorage.setItem('rsj_residents', JSON.stringify(appState.residents));
+        localStorage.setItem('rsj_residents_v2', JSON.stringify(appState.residents));
         renderResidents();
         renderShiftCards();
+        showAlert('Residente eliminado.', 'info');
       }
     }
 
     function renderResidents() {
       const list = document.getElementById('residentsList');
+      document.getElementById('activeResidentCount').innerText = appState.residents.length;
       list.innerHTML = '';
 
       if (appState.residents.length === 0) {
-        list.innerHTML = `<p class="text-sm text-slate-500 italic col-span-2">No hay residentes registrados.</p>`;
+        list.innerHTML = `
+          <div class="col-span-2 text-center py-8 bg-slate-50 border border-dashed border-slate-300 rounded-xl">
+            <i class="fa-solid fa-hospital-user text-3xl text-slate-400 mb-2"></i>
+            <p class="text-sm font-medium text-slate-500">No hay residentes registrados. Utilice el formulario de arriba.</p>
+          </div>
+        `;
+        return;
+      }
+
+      appState.residents.forEach(r => {
+        const badgeColor = r.disability === 'Grave' ? 'bg-rose-100 text-rose-800' : r.disability === 'Moderada' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800';
+
+        const card = document.createElement('div');
+        card.className = "bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col justify-between hover:border-slate-300 transition";
+        card.innerHTML = `
+          <div>
+            <div class="flex justify-between items-start mb-2">
+              <div>
+                <h4 class="font-bold text-slate-900 text-base">${r.name}</h4>
+                <p class="text-xs text-slate-500 font-semibold">RUT: ${r.rut || 'N/A'} | Edad: ${r.age} años</p>
+              </div>
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full ${badgeColor}">
+                Discapacidad: ${r.disability}
+              </span>
+            </div>
+
+            <div class="space-y-2 mt-3 text-xs">
+              <p><strong class="text-slate-700">F. Nacimiento:</strong> ${r.birthDate || 'No especificada'}</p>
+              <p><strong class="text-slate-700">Enfermedades:</strong> ${r.diseases || 'Ninguna registrada'}</p>
+              <p><strong class="text-slate-700">Medicamentos:</strong> ${r.meds || 'Sin medicamentos asignados'}</p>
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-3 mt-4 pt-3 border-t border-slate-200 text-xs font-semibold">
+            <button onclick="editResident('${r.id}')" class="text-sky-600 hover:text-sky-800">
+              <i class="fa-solid fa-pen-to-square"></i> Editar
+            </button>
+            <button onclick="deleteResident('${r.id}')" class="text-rose-600 hover:text-rose-800">
+              <i class="fa-solid fa-trash-can"></i> Eliminar
+            </button>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    // TARJETAS DE ENTREGA DE TURNO POR RESIDENTE
+    function renderShiftCards() {
+      const container = document.getElementById('residentShiftCards');
+      container.innerHTML = '';
+
+      if (appState.residents.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 bg-slate-50 border border-dashed border-slate-300 rounded-xl">
+            <p class="text-sm font-medium text-slate-500">Primero registre residentes en la pestaña "Registro y Ficha de Residentes".</p>
+          </div>
+        `;
         return;
       }
 
       appState.residents.forEach(r => {
         const div = document.createElement('div');
-        div.className = "bg-slate-50 border border-slate-200 rounded-lg p-4 flex flex-col justify-between";
+        div.className = "p-5 bg-slate-50 border border-slate-200 rounded-xl space-y-3";
         div.innerHTML = `
-          <div>
-            <div class="flex justify-between items-start mb-1">
-              <h4 class="font-bold text-slate-800 text-sm">${r.name}</h4>
-              <span class="text-xs font-semibold px-2 py-0.5 bg-slate-200 rounded text-slate-700">${r.room || 'Sin hab.'}</span>
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-slate-200 gap-2">
+            <div>
+              <span class="font-bold text-slate-900 text-base">${r.name}</span>
+              <span class="text-xs text-slate-500 ml-2 font-medium">(RUT: ${r.rut} | ${r.age} años)</span>
             </div>
-            <p class="text-xs text-slate-600 mt-2">${r.notes || 'Sin observaciones médicas registradas.'}</p>
+            <span class="text-xs bg-indigo-100 text-indigo-800 font-semibold px-2.5 py-1 rounded-md">
+              Medicación usual: ${r.meds ? 'Asignada' : 'Sin registro'}
+            </span>
           </div>
-          <div class="flex justify-end gap-3 mt-4 pt-2 border-t border-slate-200 text-xs font-semibold">
-            <button onclick="editResident('${r.id}')" class="text-sky-600 hover:
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Estado General / Novedades de la Jornada</label>
+              <textarea id="obs-${r.id}" rows="3" placeholder="Estado anímico, apetito, sueño, incidentes o novedades de ${r.name}..." class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none bg-white"></textarea>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Medicamentos e Insumos Entregados en este Turno</label>
+              <textarea id="meds-${r.id}" rows="3" placeholder="Detalle dosis de medicamentos administrados o insumos entregados a ${r.name}..." class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-sky-500 focus:outline-none bg-white"></textarea>
+            </div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // REGISTRAR ENTREGA DE TURNO
+    function saveShiftLog() {
+      const supervisor = document.getElementById('headerSupervisor').value;
+      const date = document.getElementById('headerDate').value;
+      const schedule = document.getElementById('headerSchedule').value;
+      const generalNotes = document.getElementById('generalNotes').value.trim();
+
+      if (appState.residents.length === 0) {
+        showAlert('No hay residentes registrados para guardar entrega de turno.', 'warning');
+        return;
+      }
+
+      const residentShiftData = appState.residents.map(r => {
+        const obsEl = document.getElementById(`obs-${r.id}`);
+        const medsEl = document.getElementById(`meds-${r.id}`);
+        return {
+          id: r.id,
+          name: r.name,
+          rut: r.rut,
+          observations: obsEl ? obsEl.value.trim() : '',
+          medicationsGiven: medsEl ? medsEl.value.trim() : ''
+        };
+      });
+
+      const entry = {
+        id: Date.now().toString(),
+        timestamp: new Date().toLocaleString('es-CL'),
+        supervisor,
+        date,
+        schedule,
+        generalNotes,
+        residentData: residentShiftData
+      };
+
+      appState.history.unshift(entry);
+      localStorage.setItem('rsj_history_v2', JSON.stringify(appState.history));
+
+      showAlert('Entrega de turno por residente registrada correctamente.', 'success');
+      resetShiftForm();
+      renderHistory();
+      switchTab('tab-historico');
+    }
+
+    function resetShiftForm() {
+      document.getElementById('generalNotes').value = '';
+      appState.residents.forEach(r => {
+        const obsEl = document.getElementById(`obs-${r.id}`);
+        const medsEl = document.getElementById(`meds-${r.id}`);
+        if (obsEl) obsEl.value = '';
+        if (medsEl) medsEl.value = '';
+      });
+    }
+
+    // HISTÓRICO DE ENTREGAS
+    function renderHistory() {
+      const container = document.getElementById('historyList');
+      const searchText = document.getElementById('searchInput').value.toLowerCase();
+      container.innerHTML = '';
+
+      const filtered = appState.history.filter(item => {
+        const matchSupervisor = item.supervisor.toLowerCase().includes(searchText);
+        const matchNotes = item.generalNotes.toLowerCase().includes(searchText);
+        const matchResident = item.residentData.some(rd => rd.name.toLowerCase().includes(searchText) || rd.observations.toLowerCase().includes(searchText));
+        return matchSupervisor || matchNotes || matchResident;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 bg-slate-50 border border-dashed border-slate-300 rounded-xl">
+            <i class="fa-solid fa-folder-open text-3xl text-slate-400 mb-2"></i>
+            <p class="text-slate-500 font-medium text-sm">No existen entregas de turno registradas.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const card = document.createElement('div');
+        card.className = "bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4 hover:border-slate-300 transition";
+
+        const residentCardsHTML = item.residentData.map(rd => `
+          <div class="bg-white p-3.5 rounded-xl border border-slate-200 text-xs space-y-1">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-slate-900">${rd.name}</span>
+              <span class="text-slate-400">RUT: ${rd.rut || 'N/A'}</span>
+            </div>
+            <p><strong class="text-slate-700">Estado / Novedades:</strong> ${rd.observations || 'Sin observaciones.'}</p>
+            <p><strong class="text-slate-700">Insumos/Medicamentos:</strong> ${rd.medicationsGiven || 'Sin detalle de insumos.'}</p>
+          </div>
+        `).join('');
+
+        card.innerHTML = `
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-200 pb-3 gap-2">
+            <div>
+              <span class="text-base font-bold text-slate-900">${item.supervisor}</span>
+              <span class="text-xs bg-indigo-100 text-indigo-800 font-bold px-2.5 py-1 rounded-full ml-2">${item.schedule}</span>
+            </div>
+            <div class="text-xs text-slate-500 font-semibold">
+              <i class="fa-regular fa-calendar mr-1"></i> Fecha: ${item.date} &nbsp;|&nbsp; <i class="fa-regular fa-clock mr-1"></i> Registrado: ${item.timestamp}
+            </div>
+          </div>
+
+          ${item.generalNotes ? `
+            <div class="text-xs text-amber-900 bg-amber-50 border border-amber-200 p-3 rounded-xl">
+              <strong>Novedades Generales:</strong> ${item.generalNotes}
+            </div>
+          ` : ''}
+
+          <div class="space-y-2">
+            <h5 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Detalle por Residente:</h5>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              ${residentCardsHTML}
+            </div>
+          </div>
+
+          <div class="flex justify-end pt-2">
+            <button onclick="deleteHistoryItem('${item.id}')" class="text-xs text-rose-600 hover:text-rose-800 font-semibold flex items-center gap-1">
+              <i class="fa-solid fa-trash-can"></i> Eliminar Registro
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function deleteHistoryItem(id) {
+      if (confirm('¿Eliminar este registro del histórico?')) {
+        appState.history = appState.history.filter(h => h.id !== id);
+        localStorage.setItem('rsj_history_v2', JSON.stringify(appState.history));
+        renderHistory();
+        showAlert('Registro del historial eliminado.', 'info');
+      }
+    }
+
+    function clearHistory() {
+      if (confirm('¿Desea borrar todo el historial de entregas de turno?')) {
+        appState.history = [];
+        localStorage.removeItem('rsj_history_v2');
+        renderHistory();
+        showAlert('Histórico vaciado.', 'info');
+      }
+    }
+
+    // ALERTAS
+    function showAlert(msg, type = 'info') {
+      const box = document.getElementById('alertBox');
+      const icon = document.getElementById('alertIcon');
+      const text = document.getElementById('alertMessage');
+
+      box.className = "mb-6 p-4 rounded-xl border flex items-center justify-between shadow-sm ";
+
+      if (type === 'success') {
+        box.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-800');
+        icon.className = 'fa-solid fa-circle-check text-emerald-600 text-lg';
+      } else if (type === 'warning') {
+        box.classList.add('bg-amber-50', 'border-amber-200', 'text-amber-800');
+        icon.className = 'fa-solid fa-triangle-exclamation text-amber-600 text-lg';
+      } else {
+        box.classList.add('bg-sky-50', 'border-sky-200', 'text-sky-800');
+        icon.className = 'fa-solid fa-circle-info text-sky-600 text-lg';
+      }
+
+      text.innerText = msg;
+      box.classList.remove('hidden');
+
+      setTimeout(() => {
+        closeAlert();
+      }, 4000);
+    }
+
+    function closeAlert() {
+      document.getElementById('alertBox').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
